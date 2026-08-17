@@ -27,8 +27,8 @@ h2{font-size:18px;margin:0 0 15px}h3{font-size:15px;margin:0 0 10px}
 <header><div class="header"><div><div class="brand">⚡ Orçamento Elétrico</div><div class="sub">Calculadora de mão de obra • Tabela 2026</div></div><button class="adminBtn" onclick="toggleAdmin()">⚙️ Administração</button></div></header>
 <main>
 <section id="admin" class="card admin">
-<h2>⚙️ Área administrativa</h2>
-<div class="notice">Os preços abaixo ficam salvos neste navegador. Para um sistema multiusuário com login e banco online, será necessário conectar um serviço como Supabase/Firebase posteriormente.</div>
+<h2>⚙️ Área administrativa</h2><div style="font-size:12px;color:#6b7280;margin:-8px 0 12px">Banco conectado: Supabase</div>
+<div class="notice">Os preços são carregados do Supabase. A gravação das alterações depende das políticas RLS e do login administrativo, que configuraremos na próxima etapa.</div>
 <div style="margin:12px 0"><input id="adminSearch" class="search" placeholder="Pesquisar serviço para editar..."></div>
 <div id="adminList" class="admin-grid"></div>
 </section>
@@ -37,7 +37,7 @@ h2{font-size:18px;margin:0 0 15px}h3{font-size:15px;margin:0 0 10px}
 <div>
 <div class="card">
 <h2>🔎 Escolher serviços</h2>
-<input id="search" class="search" placeholder="Pesquisar serviço: tomada, chuveiro, QDC, iluminação...">
+<input id="search" class="search" placeholder="Pesquisar serviço: tomada, chuveiro, QDC, iluminação..."><div id="dbStatus" style="font-size:11px;color:#6b7280;margin-top:8px">Conectando ao banco...</div>
 <div id="tags" class="tags"></div>
 <div id="services" class="services"></div>
 </div>
@@ -77,95 +77,45 @@ h2{font-size:18px;margin:0 0 15px}h3{font-size:15px;margin:0 0 10px}
 </div>
 </div>
 </main>
-<script>
-const initialServices = [
-["Iluminação","Instalação de interruptor simples ou pulsador",55,70,68],
-["Iluminação","Instalação de interruptor tree-way ou four way",70,90,80],
-["Iluminação","Instalação de interruptor duplo ou bipolar",70,90,80],
-["Iluminação","Instalação de interruptor e tomada (juntos)",70,90,80],
-["Iluminação","Instalação de arandela, pendente ou spot comum",75,93,93],
-["Iluminação","Instalação de lâmpada fluorescente ou LED (tubular)",80,93,93],
-["Iluminação","Instalação de lustres simples ou luminária",105,120,120],
-["Iluminação","Instalação de lustres grandes ou luminária",160,180,180],
-["Iluminação","Instalação de refletor de jardim",115,133,133],
-["Iluminação","Instalação de refletor de poste comum",145,173,173],
-["Iluminação","Instalação de refletor de poste com lâmpada a vapor",145,173,173],
-["Iluminação","Instalação de reator de lâmpada a vapor",90,105.5,105.5],
-["Iluminação","Instalação de fotocélula ou sensor presença",90,115,115],
-["Iluminação","Instalação de refletor LED + fotocélula ou sensor de presença",80,105,105],
-["Iluminação","Instalação de luminária de emergência de sobrepor",90,115,115],
-["Iluminação","Instalação de luminária de emergência de embutir (caixinha 2x4)",70,88,88],
-["Iluminação","Instalação de perfil de LED (metro linear)",180,205,205],
-["Ponto de utilização","Instalação de tomada simples",45,70,58],
-["Ponto de utilização","Instalação de tomada dupla",55,80,68],
-["Ponto de utilização","Instalação de tomada tripla",70,80,80],
-["Ponto de utilização","Instalação de tomada de piso e/ou telefone",70,80,80],
-["Ponto de utilização","Instalação de tomada industrial (3P+T)",105,128,128],
-["Ponto de utilização","Instalação de tomada de sobrepor com canaleta",70,80,80],
-["Ponto de utilização","Instalação de ventilador de teto",135,175,155],
-["Ponto de utilização","Instalação de ventilador de parede",160,200,180],
-["Ponto de utilização","Instalação de chuveiro elétrico simples",105,125,115],
-["Ponto de utilização","Instalação de chuveiro luxo (eletrônico/pressurizado/ducha)",105,125,115],
-["Ponto de utilização","Troca de resistência de chuveiro",160,180,170],
-["Ponto de utilização","Instalação de torneira elétrica",90,115,103],
-["Ponto de utilização","Instalação de campainha até 20 mts",105,120,113],
-["Ponto de utilização","Instalação de interfone 1 chamada",80,100,90],
-["Ponto de utilização","Instalação de interfone 2 chamadas",170,230,200],
-["Ponto de utilização","Instalação de interfone 4 chamadas",220,350,285],
-["Ponto de utilização","Instalação de vídeo porteiro",480,550,515],
-["Ponto de utilização","Instalação de câmera CFTV 1 câmera Wi-Fi",205,230,218],
-["Ponto de utilização","Instalação de câmeras CFTV 3 câmeras Wi-Fi",410,450,430],
-["Ponto de utilização","Instalação de portão eletrônico deslizante",300,350,325],
-["Ponto de utilização","Instalação de portão eletrônico pivotante/basculante",560,610,585],
-["Ponto de utilização","Instalação de botoeira para fechadura eletrônica",70,100,85],
-["Ponto de utilização","Instalação de fechadura eletrônica (portão social)",170,200,185],
-["Ponto de utilização","Instalação de exaustor cozinha ou banheiro",260,300,280],
-["Ponto de utilização","Instalação de sistema de alarme residencial",900,1200,1050],
-["Ponto de utilização","Instalação de aquecedor elétrico (com passagem de cabos)",2330,3200,2765],
-["Ponto de utilização","Instalação de detector de fumaça",1290,1800,1545],
-["Ponto de utilização","Instalação de cerca elétrica (por metro)",70,100,85],
-["Ponto de utilização","Instalação de nobreak",325,360,343],
-["Ponto de utilização","Instalação de aquecedor a gás",350,450,400],
-["Ponto de utilização","Instalação de termostato ou temporizador",105,150,128],
-["Quadros","Substituição de disjuntor monofásico",60,80,70],
-["Quadros","Substituição de disjuntor bifásico",80,100,90],
-["Quadros","Substituição de disjuntor trifásico",120,130,115],
-["Quadros","Instalação de IDR (interruptor diferencial residual)",150,170,160],
-["Quadros","Instalação de DPS - dispositivo de proteção contra surtos",120,140,130],
-["Quadros","Instalação de barramento pente monopolar no QDC",70,90,80],
-["Quadros","Instalação de barramento pente bipolar no QDC",80,100,90],
-["Quadros","Instalação de barramento pente tripolar no QDC",90,110,100],
-["Quadros","Instalação de barramento de neutro e/ou terra",100,120,110],
-["Quadros","Instalação de haste aterramento",250,500,350],
-["Quadros","Instalação de contator e/ou relé térmico",200,250,230],
-["Quadros","Instalação e montagem QDC (6 circuitos + DR + DPS)",650,800,725],
-["Quadros","Instalação e montagem QDC (12 circuitos + DR + DPS)",850,1000,925],
-["Quadros","Instalação e montagem QDC (18 circuitos + DR + DPS)",1000,1500,1250],
-["Quadros","Instalação e montagem QDC (24 circuitos + DR + DPS)",1500,3000,2300],
-["Passagem de cabos","Entrada monofásica (QM para QDC)",220,250,230],
-["Passagem de cabos","Entrada bifásica ou trifásica (QM para QDC)",250,300,280],
-["Passagem de cabos","Alimentação para motores",300,350,325],
-["Solução de problemas","Curto circuito monofásico",130,600,400],
-["Solução de problemas","Curto circuito bifásico",200,1000,600],
-["Solução de problemas","Curto circuito trifásico",300,1200,800],
-["Padrão de entrada","Instalação de medidor - padrão monofásico 127V ou 220V",1200,1800,1500],
-["Padrão de entrada","Instalação de medidor - padrão bifásico 220V",1400,2000,1700],
-["Padrão de entrada","Instalação de medidor - padrão trifásico 220V",2000,2500,2250],
-["Automação","Instalação de interruptor inteligente",150,300,225],
-["Automação","Instalação de mini relé interruptor",200,300,250],
-["Automação","Instalação de relé de impulso",150,220,175],
-["Automação","Instalação de relé dimmer",200,300,250],
-["Automação","Instalação/configuração controle remoto universal",110,150,130],
-["Automação","Instalação/configuração assistente virtual",200,300,250],
-["Automação","Instalação de tomada inteligente",150,200,175],
-["Automação","Instalação de mini relé controle de persiana",200,300,250],
-["Automação","Instalação/configuração hub",200,250,225],
-["Automação","Instalação/configuração roteador",150,300,225],
-["Automação","Instalação/configuração fechadura inteligente",250,400,325],
-["Carregador veicular","Instalação carregador veicular",1200,1800,1500]
-].map((s,i)=>({id:i+1,cat:s[0],name:s[1],min:s[2],max:s[3],avg:s[4]}));
 
-let services = JSON.parse(localStorage.getItem("eletricaServices")||"null") || initialServices;
+<script>
+const SUPABASE_URL = "https://jfwcvqqjtuqjbtapcdet.supabase.co";
+const SUPABASE_KEY = "sb_publishable_gC6HXuFlm59yT60YHFxM8w_CNqzSidO";
+
+const initialServices = [];
+async function loadServicesFromSupabase() {
+  try {
+    const url = SUPABASE_URL + "/rest/v1/servicos?select=id,nome,preco_minimo,preco_medio,preco_maximo,unidade,categoria_id,ativo,categorias(nome)&ativo=eq.true&order=id";
+    const response = await fetch(url, {
+      headers: {
+        "apikey": SUPABASE_KEY,
+        "Authorization": "Bearer " + SUPABASE_KEY
+      }
+    });
+    if (!response.ok) throw new Error("HTTP " + response.status);
+    const rows = await response.json();
+    if (!Array.isArray(rows)) throw new Error("Resposta inválida");
+    services = rows.map(s => ({
+      id: s.id,
+      cat: s.categorias?.nome || "Sem categoria",
+      name: s.nome,
+      min: Number(s.preco_minimo) || 0,
+      avg: Number(s.preco_medio) || 0,
+      max: Number(s.preco_maximo) || 0,
+      unidade: s.unidade || "unidade"
+    }));
+    selectedCat = "Todos";
+    renderTags();
+    renderServices();
+    renderAdmin();
+  } catch (err) {
+    console.error("Erro ao carregar serviços do Supabase:", err);
+    document.getElementById("services").innerHTML =
+      '<div class="empty">Não foi possível carregar os serviços do banco. Verifique a conexão com o Supabase.</div>';
+  }
+}
+
+let services = [];
 let selectedCat="Todos", quote=[];
 
 const money=v=>new Intl.NumberFormat("pt-BR",{style:"currency",currency:"BRL"}).format(Number(v)||0);
@@ -219,12 +169,35 @@ function toggleAdmin(){document.getElementById("admin").classList.toggle("show")
 function renderAdmin(){
  const q=norm(document.getElementById("adminSearch").value||"");
  const list=services.filter(s=>norm(s.name).includes(q));
- document.getElementById("adminList").innerHTML=list.map(s=>`<div class="admin-item"><div><b>${s.name}</b><div class="cat"># ${s.cat}</div></div>
+ document.getElementById("adminList").innerHTML=list.length ? list.map(s=>`<div class="admin-item"><div><b>${s.name}</b><div class="cat"># ${s.cat}</div></div>
  <input type="number" value="${s.min}" title="Mínimo" onchange="editPrice(${s.id},'min',this.value)">
  <input type="number" value="${s.avg}" title="Médio" onchange="editPrice(${s.id},'avg',this.value)">
  <input type="number" value="${s.max}" title="Máximo" onchange="editPrice(${s.id},'max',this.value)"></div>`).join("");
 }
-function editPrice(id,key,v){const s=services.find(x=>x.id===id);s[key]=Number(v)||0;localStorage.setItem("eletricaServices",JSON.stringify(services));renderServices();renderAdmin()}
+async function editPrice(id,key,v){
+ const s=services.find(x=>x.id===id);
+ if(!s)return;
+ const value=Math.max(0,Number(v)||0);
+ const field=key==="min"?"preco_minimo":key==="avg"?"preco_medio":"preco_maximo";
+ try{
+   const response=await fetch(SUPABASE_URL+"/rest/v1/servicos?id=eq."+encodeURIComponent(id),{
+     method:"PATCH",
+     headers:{
+       "apikey":SUPABASE_KEY,
+       "Authorization":"Bearer "+SUPABASE_KEY,
+       "Content-Type":"application/json",
+       "Prefer":"return=minimal"
+     },
+     body:JSON.stringify({[field]:value})
+   });
+   if(!response.ok) throw new Error("HTTP "+response.status);
+   s[key]=value;
+   renderServices(); renderAdmin();
+ }catch(err){
+   alert("Não foi possível salvar o preço no Supabase. Verifique se você está autenticado como administrador.");
+   console.error(err);
+ }
+}
 document.getElementById("adminSearch").addEventListener("input",renderAdmin);
 
 function printQuote(){
@@ -246,6 +219,6 @@ function printQuote(){
 <script>window.onload=()=>window.print()<\/script></body></html>`);
  win.document.close();
 }
-renderTags();renderServices();renderQuote();
+renderQuote(); loadServicesFromSupabase().then(()=>{document.getElementById("dbStatus").textContent="✓ Serviços carregados do Supabase";document.getElementById("dbStatus").style.color="#16803a";}).catch(()=>{});
 </script>
 </body></html>
