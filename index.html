@@ -172,7 +172,7 @@ function renderAdmin(){
  document.getElementById("adminList").innerHTML=list.length ? list.map(s=>`<div class="admin-item"><div><b>${s.name}</b><div class="cat"># ${s.cat}</div></div>
  <input type="number" value="${s.min}" title="Mínimo" onchange="editPrice(${s.id},'min',this.value)">
  <input type="number" value="${s.avg}" title="Médio" onchange="editPrice(${s.id},'avg',this.value)">
- <input type="number" value="${s.max}" title="Máximo" onchange="editPrice(${s.id},'max',this.value)"></div>`).join("");
+ <input type="number" value="${s.max}" title="Máximo" onchange="editPrice(${s.id},'max',this.value)"></div>`).join("") : `<div class="empty">Nenhum serviço encontrado.</div>`;
 }
 async function editPrice(id,key,v){
  const s=services.find(x=>x.id===id);
