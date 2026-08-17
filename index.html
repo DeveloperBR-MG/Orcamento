@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Orçamento Elétrico</title>
+<style>
+:root{--bg:#f4f6f8;--card:#fff;--text:#18212b;--muted:#6b7280;--primary:#1769e0;--danger:#dc3545;--border:#e3e7ed;--shadow:0 8px 25px #00000012}
+*{box-sizing:border-box}body{margin:0;font-family:Arial,Helvetica,sans-serif;background:var(--bg);color:var(--text)}
+header{background:#101827;color:#fff;padding:18px 22px;position:sticky;top:0;z-index:10;box-shadow:0 2px 12px #0003}
+.header{max-width:1200px;margin:auto;display:flex;justify-content:space-between;align-items:center;gap:15px}.brand{font-size:21px;font-weight:800}.sub{font-size:12px;color:#b9c3d2;margin-top:4px}
+button{border:0;border-radius:9px;padding:10px 14px;cursor:pointer;font-weight:700}.adminBtn{background:#fff;color:#101827}
+main{max-width:1200px;margin:22px auto;padding:0 15px}.grid{display:grid;grid-template-columns:1.35fr .9fr;gap:20px}
+.card{background:var(--card);border:1px solid var(--border);border-radius:15px;padding:18px;box-shadow:var(--shadow);margin-bottom:18px}
+h2{font-size:18px;margin:0 0 15px}h3{font-size:15px;margin:0 0 10px}
+.search{width:100%;padding:14px;border:1px solid var(--border);border-radius:10px;font-size:15px;outline:none}.search:focus{border-color:var(--primary)}
+.tags{display:flex;flex-wrap:wrap;gap:8px;margin:13px 0}.tag{background:#eef2f7;color:#394554;border-radius:999px;padding:8px 12px;font-size:12px}.tag.active{background:#1769e0;color:white}
+.services{display:grid;gap:10px;max-height:560px;overflow:auto;padding-right:3px}.service{border:1px solid var(--border);border-radius:11px;padding:13px;display:grid;grid-template-columns:1fr auto;gap:10px}.service-title{font-weight:700;font-size:14px}.cat{font-size:11px;color:var(--muted);margin-top:4px}.prices{font-size:11px;color:#5b6572;margin-top:8px}.add{background:#1769e0;color:#fff;align-self:center}.empty{text-align:center;color:var(--muted);padding:25px}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:10px}.field{margin-bottom:11px}.field label{display:block;font-size:12px;font-weight:700;margin-bottom:5px}.field input,.field select,.field textarea{width:100%;padding:10px;border:1px solid var(--border);border-radius:9px;background:#fff}.field textarea{min-height:70px;resize:vertical}
+.quote-item{border-bottom:1px solid var(--border);padding:11px 0}.qi-top{display:flex;justify-content:space-between;gap:8px}.qi-name{font-weight:700;font-size:13px}.qi-sub{font-size:11px;color:var(--muted);margin-top:4px}.qty{width:65px;padding:5px;border:1px solid var(--border);border-radius:6px}.remove{background:#fff;color:var(--danger);padding:3px 7px}
+.summary{border-top:2px solid var(--border);padding-top:12px;margin-top:10px}.sumline{display:flex;justify-content:space-between;margin:7px 0;font-size:13px}.total{font-size:20px;font-weight:900;margin-top:12px}.primary{background:#1769e0;color:#fff;width:100%;margin-top:10px}.secondary{background:#eaf0f8;color:#18324f;width:100%;margin-top:8px}
+.admin{display:none}.admin.show{display:block}.admin-grid{display:grid;grid-template-columns:1fr 1fr;gap:15px}.admin-item{border:1px solid var(--border);padding:10px;border-radius:9px;display:grid;grid-template-columns:1fr 95px 95px 95px;gap:7px;align-items:center}.admin-item input{width:100%;padding:7px;border:1px solid var(--border);border-radius:6px}.notice{font-size:12px;background:#fff8df;border:1px solid #f1df9b;padding:10px;border-radius:9px;color:#6c5a1c}
+@media(max-width:850px){.grid,.admin-grid{grid-template-columns:1fr}.service{grid-template-columns:1fr}.add{width:100%}.header{align-items:flex-start}.admin-item{grid-template-columns:1fr 1fr 1fr 1fr}}
+</style>
+</head>
+<body>
+<header><div class="header"><div><div class="brand">⚡ Orçamento Elétrico</div><div class="sub">Calculadora de mão de obra • Tabela 2026</div></div><button class="adminBtn" onclick="toggleAdmin()">⚙️ Administração</button></div></header>
+<main>
+<section id="admin" class="card admin">
+<h2>⚙️ Área administrativa</h2>
+<div class="notice">Os preços abaixo ficam salvos neste navegador. Para um sistema multiusuário com login e banco online, será necessário conectar um serviço como Supabase/Firebase posteriormente.</div>
+<div style="margin:12px 0"><input id="adminSearch" class="search" placeholder="Pesquisar serviço para editar..."></div>
+<div id="adminList" class="admin-grid"></div>
+</section>
+
+<div class="grid">
+<div>
+<div class="card">
+<h2>🔎 Escolher serviços</h2>
+<input id="search" class="search" placeholder="Pesquisar serviço: tomada, chuveiro, QDC, iluminação...">
+<div id="tags" class="tags"></div>
+<div id="services" class="services"></div>
+</div>
+</div>
+
+<div>
+<div class="card">
+<h2>🧾 Orçamento</h2>
+<div class="row">
+<div class="field"><label>Cliente</label><input id="cliente" placeholder="Nome do cliente"></div>
+<div class="field"><label>Telefone</label><input id="telefone" placeholder="(00) 00000-0000"></div>
+</div>
+<div class="field"><label>Endereço / local</label><input id="endereco" placeholder="Endereço do serviço"></div>
+<div id="quote"></div>
+<div class="summary">
+<div class="sumline"><span>Mão de obra</span><strong id="mao">R$ 0,00</strong></div>
+<div class="sumline"><span>Materiais</span><strong id="mat">R$ 0,00</strong></div>
+<div class="sumline"><span>Deslocamento</span><strong id="desl">R$ 0,00</strong></div>
+<div class="row">
+<div class="field"><label>Materiais (R$)</label><input id="materialInput" type="number" min="0" step=".01" value="0"></div>
+<div class="field"><label>Deslocamento (R$)</label><input id="deslocInput" type="number" min="0" step=".01" value="0"></div>
+</div>
+<div class="row">
+<div class="field"><label>Desconto (R$)</label><input id="desconto" type="number" min="0" step=".01" value="0"></div>
+<div class="field"><label>Acréscimo (R$)</label><input id="acrescimo" type="number" min="0" step=".01" value="0"></div>
+</div>
+<div class="field"><label>Forma de pagamento</label><select id="pagamento"><option>PIX</option><option>Dinheiro</option><option>Cartão de débito</option><option>Cartão de crédito</option><option>Parcelado</option><option>Transferência</option><option>Outro</option></select></div>
+<div class="row">
+<div class="field"><label>Prazo de execução</label><input id="prazo" placeholder="Ex.: 2 dias"></div>
+<div class="field"><label>Garantia</label><input id="garantia" placeholder="Ex.: 90 dias"></div>
+</div>
+<div class="field"><label>Observações</label><textarea id="obs" placeholder="Condições, detalhes do serviço, materiais não inclusos..."></textarea></div>
+<div class="sumline total"><span>TOTAL FINAL</span><span id="total">R$ 0,00</span></div>
+<button class="primary" onclick="printQuote()">🖨️ Gerar / imprimir orçamento</button>
+<button class="secondary" onclick="clearQuote()">🗑️ Limpar orçamento</button>
+</div></div>
+</div>
+</div>
+</main>
+
+<script>
+const initialServices = [
+["Iluminação","Instalação de interruptor simples ou pulsador",55,70,68],
+["Iluminação","Instalação de interruptor tree-way ou four way",70,90,80],
+["Iluminação","Instalação de interruptor duplo ou bipolar",70,90,80],
+["Iluminação","Instalação de interruptor e tomada (juntos)",70,90,80],
+["Iluminação","Instalação de arandela, pendente ou spot comum",75,93,93],
+["Iluminação","Instalação de lâmpada fluorescente ou LED (tubular)",80,93,93],
+["Iluminação","Instalação de lustres simples ou luminária",105,120,120],
+["Iluminação","Instalação de lustres grandes ou luminária",160,180,180],
+["Iluminação","Instalação de refletor de jardim",115,133,133],
+["Iluminação","Instalação de refletor de poste comum",145,173,173],
+["Iluminação","Instalação de refletor de poste com lâmpada a vapor",145,173,173],
+["Iluminação","Instalação de reator de lâmpada a vapor",90,105.5,105.5],
+["Iluminação","Instalação de fotocélula ou sensor presença",90,115,115],
+["Iluminação","Instalação de refletor LED + fotocélula ou sensor de presença",80,105,105],
+["Iluminação","Instalação de luminária de emergência de sobrepor",90,115,115],
+["Iluminação","Instalação de luminária de emergência de embutir (caixinha 2x4)",70,88,88],
+["Iluminação","Instalação de perfil de LED (metro linear)",180,205,205],
+["Ponto de utilização","Instalação de tomada simples",45,70,58],
+["Ponto de utilização","Instalação de tomada dupla",55,80,68],
+["Ponto de utilização","Instalação de tomada tripla",70,80,80],
+["Ponto de utilização","Instalação de tomada de piso e/ou telefone",70,80,80],
+["Ponto de utilização","Instalação de tomada industrial (3P+T)",105,128,128],
+["Ponto de utilização","Instalação de tomada de sobrepor com canaleta",70,80,80],
+["Ponto de utilização","Instalação de ventilador de teto",135,175,155],
+["Ponto de utilização","Instalação de ventilador de parede",160,200,180],
+["Ponto de utilização","Instalação de chuveiro elétrico simples",105,125,115],
+["Ponto de utilização","Instalação de chuveiro luxo (eletrônico/pressurizado/ducha)",105,125,115],
+["Ponto de utilização","Troca de resistência de chuveiro",160,180,170],
+["Ponto de utilização","Instalação de torneira elétrica",90,115,103],
+["Ponto de utilização","Instalação de campainha até 20 mts",105,120,113],
+["Ponto de utilização","Instalação de interfone 1 chamada",80,100,90],
+["Ponto de utilização","Instalação de interfone 2 chamadas",170,230,200],
+["Ponto de utilização","Instalação de interfone 4 chamadas",220,350,285],
+["Ponto de utilização","Instalação de vídeo porteiro",480,550,515],
+["Ponto de utilização","Instalação de câmera CFTV 1 câmera Wi-Fi",205,230,218],
+["Ponto de utilização","Instalação de câmeras CFTV 3 câmeras Wi-Fi",410,450,430],
+["Ponto de utilização","Instalação de portão eletrônico deslizante",300,350,325],
+["Ponto de utilização","Instalação de portão eletrônico pivotante/basculante",560,610,585],
+["Ponto de utilização","Instalação de botoeira para fechadura eletrônica",70,100,85],
+["Ponto de utilização","Instalação de fechadura eletrônica (portão social)",170,200,185],
+["Ponto de utilização","Instalação de exaustor cozinha ou banheiro",260,300,280],
+["Ponto de utilização","Instalação de sistema de alarme residencial",900,1200,1050],
+["Ponto de utilização","Instalação de aquecedor elétrico (com passagem de cabos)",2330,3200,2765],
+["Ponto de utilização","Instalação de detector de fumaça",1290,1800,1545],
+["Ponto de utilização","Instalação de cerca elétrica (por metro)",70,100,85],
+["Ponto de utilização","Instalação de nobreak",325,360,343],
+["Ponto de utilização","Instalação de aquecedor a gás",350,450,400],
+["Ponto de utilização","Instalação de termostato ou temporizador",105,150,128],
+["Quadros","Substituição de disjuntor monofásico",60,80,70],
+["Quadros","Substituição de disjuntor bifásico",80,100,90],
+["Quadros","Substituição de disjuntor trifásico",120,130,115],
+["Quadros","Instalação de IDR (interruptor diferencial residual)",150,170,160],
+["Quadros","Instalação de DPS - dispositivo de proteção contra surtos",120,140,130],
+["Quadros","Instalação de barramento pente monopolar no QDC",70,90,80],
+["Quadros","Instalação de barramento pente bipolar no QDC",80,100,90],
+["Quadros","Instalação de barramento pente tripolar no QDC",90,110,100],
+["Quadros","Instalação de barramento de neutro e/ou terra",100,120,110],
+["Quadros","Instalação de haste aterramento",250,500,350],
+["Quadros","Instalação de contator e/ou relé térmico",200,250,230],
+["Quadros","Instalação e montagem QDC (6 circuitos + DR + DPS)",650,800,725],
+["Quadros","Instalação e montagem QDC (12 circuitos + DR + DPS)",850,1000,925],
+["Quadros","Instalação e montagem QDC (18 circuitos + DR + DPS)",1000,1500,1250],
+["Quadros","Instalação e montagem QDC (24 circuitos + DR + DPS)",1500,3000,2300],
+["Passagem de cabos","Entrada monofásica (QM para QDC)",220,250,230],
+["Passagem de cabos","Entrada bifásica ou trifásica (QM para QDC)",250,300,280],
+["Passagem de cabos","Alimentação para motores",300,350,325],
+["Solução de problemas","Curto circuito monofásico",130,600,400],
+["Solução de problemas","Curto circuito bifásico",200,1000,600],
+["Solução de problemas","Curto circuito trifásico",300,1200,800],
+["Padrão de entrada","Instalação de medidor - padrão monofásico 127V ou 220V",1200,1800,1500],
+["Padrão de entrada","Instalação de medidor - padrão bifásico 220V",1400,2000,1700],
+["Padrão de entrada","Instalação de medidor - padrão trifásico 220V",2000,2500,2250],
+["Automação","Instalação de interruptor inteligente",150,300,225],
+["Automação","Instalação de mini relé interruptor",200,300,250],
+["Automação","Instalação de relé de impulso",150,220,175],
+["Automação","Instalação de relé dimmer",200,300,250],
+["Automação","Instalação/configuração controle remoto universal",110,150,130],
+["Automação","Instalação/configuração assistente virtual",200,300,250],
+["Automação","Instalação de tomada inteligente",150,200,175],
+["Automação","Instalação de mini relé controle de persiana",200,300,250],
+["Automação","Instalação/configuração hub",200,250,225],
+["Automação","Instalação/configuração roteador",150,300,225],
+["Automação","Instalação/configuração fechadura inteligente",250,400,325],
+["Carregador veicular","Instalação carregador veicular",1200,1800,1500]
+].map((s,i)=>({id:i+1,cat:s[0],name:s[1],min:s[2],max:s[3],avg:s[4]}));
+
+let services = JSON.parse(localStorage.getItem("eletricaServices")||"null") || initialServices;
+let selectedCat="Todos", quote=[];
+
+const money=v=>new Intl.NumberFormat("pt-BR",{style:"currency",currency:"BRL"}).format(Number(v)||0);
+const norm=s=>s.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"");
+
+function renderTags(){
+ const cats=["Todos",...new Set(services.map(s=>s.cat))];
+ document.getElementById("tags").innerHTML=cats.map(c=>`<button class="tag ${c===selectedCat?'active':''}" onclick="setCat('${c.replaceAll("'","\\'")}')"># ${c}</button>`).join("");
+}
+function setCat(c){selectedCat=c;renderTags();renderServices();}
+function renderServices(){
+ const q=norm(document.getElementById("search").value||"");
+ const list=services.filter(s=>(selectedCat==="Todos"||s.cat===selectedCat)&&norm(s.name).includes(q));
+ document.getElementById("services").innerHTML=list.length?list.map(s=>`<div class="service">
+ <div><div class="service-title">${s.name}</div><div class="cat"># ${s.cat}</div>
+ <div class="prices">Mín. ${money(s.min)} · Médio ${money(s.avg)} · Máx. ${money(s.max)}</div></div>
+ <button class="add" onclick="addService(${s.id})">+ Adicionar</button></div>`).join(""):`<div class="empty">Nenhum serviço encontrado.</div>`;
+}
+function addService(id){
+ const s=services.find(x=>x.id===id); if(!s)return;
+ quote.push({id:s.id,name:s.name,cat:s.cat,qty:1,price:s.avg,mode:"Médio"});
+ renderQuote();
+}
+function renderQuote(){
+ document.getElementById("quote").innerHTML=quote.length?quote.map((x,i)=>`<div class="quote-item">
+ <div class="qi-top"><div class="qi-name">${x.name}</div><button class="remove" onclick="removeItem(${i})">✕</button></div>
+ <div class="qi-sub"># ${x.cat}</div>
+ <div style="display:flex;gap:7px;align-items:center;margin-top:8px">
+ <label style="font-size:11px">Qtd.</label><input class="qty" type="number" min="1" value="${x.qty}" onchange="changeQty(${i},this.value)">
+ <select onchange="changeMode(${i},this.value)" style="padding:6px;border:1px solid var(--border);border-radius:6px">
+ ${["Mínimo","Médio","Máximo","Personalizado"].map(m=>`<option ${x.mode===m?'selected':''}>${m}</option>`).join("")}</select>
+ ${x.mode==="Personalizado"?`<input class="qty" style="width:100px" type="number" min="0" step=".01" value="${x.price}" onchange="changePrice(${i},this.value)">`:``}
+ <strong style="margin-left:auto">${money(x.qty*x.price)}</strong></div></div>`).join(""):`<div class="empty">Adicione serviços ao orçamento.</div>`;
+ calc();
+}
+function changeQty(i,v){quote[i].qty=Math.max(1,Number(v)||1);renderQuote()}
+function changeMode(i,m){quote[i].mode=m;const s=services.find(x=>x.id===quote[i].id);quote[i].price=m==="Mínimo"?s.min:m==="Máximo"?s.max:m==="Médio"?s.avg:quote[i].price;renderQuote()}
+function changePrice(i,v){quote[i].price=Math.max(0,Number(v)||0);calc()}
+function removeItem(i){quote.splice(i,1);renderQuote()}
+function calc(){
+ const mao=quote.reduce((a,x)=>a+x.qty*x.price,0);
+ const mat=Number(document.getElementById("materialInput").value)||0, desl=Number(document.getElementById("deslocInput").value)||0;
+ const desc=Number(document.getElementById("desconto").value)||0, acr=Number(document.getElementById("acrescimo").value)||0;
+ document.getElementById("mao").textContent=money(mao);document.getElementById("mat").textContent=money(mat);document.getElementById("desl").textContent=money(desl);
+ document.getElementById("total").textContent=money(Math.max(0,mao+mat+desl+acr-desc));
+}
+function clearQuote(){quote=[];document.querySelectorAll("#materialInput,#deslocInput,#desconto,#acrescimo").forEach(x=>x.value=0);renderQuote()}
+["search","materialInput","deslocInput","desconto","acrescimo"].forEach(id=>document.getElementById(id).addEventListener("input",()=>id==="search"?renderServices():calc()));
+
+function toggleAdmin(){document.getElementById("admin").classList.toggle("show");renderAdmin()}
+function renderAdmin(){
+ const q=norm(document.getElementById("adminSearch").value||"");
+ const list=services.filter(s=>norm(s.name).includes(q));
+ document.getElementById("adminList").innerHTML=list.map(s=>`<div class="admin-item"><div><b>${s.name}</b><div class="cat"># ${s.cat}</div></div>
+ <input type="number" value="${s.min}" title="Mínimo" onchange="editPrice(${s.id},'min',this.value)">
+ <input type="number" value="${s.avg}" title="Médio" onchange="editPrice(${s.id},'avg',this.value)">
+ <input type="number" value="${s.max}" title="Máximo" onchange="editPrice(${s.id},'max',this.value)"></div>`).join("");
+}
+function editPrice(id,key,v){const s=services.find(x=>x.id===id);s[key]=Number(v)||0;localStorage.setItem("eletricaServices",JSON.stringify(services));renderServices();renderAdmin()}
+document.getElementById("adminSearch").addEventListener("input",renderAdmin);
+
+function printQuote(){
+ const cliente=document.getElementById("cliente").value||"Não informado";
+ const telefone=document.getElementById("telefone").value||"";
+ const endereco=document.getElementById("endereco").value||"";
+ const mat=Number(document.getElementById("materialInput").value)||0, desl=Number(document.getElementById("deslocInput").value)||0;
+ const desc=Number(document.getElementById("desconto").value)||0, acr=Number(document.getElementById("acrescimo").value)||0;
+ const mao=quote.reduce((a,x)=>a+x.qty*x.price,0), total=Math.max(0,mao+mat+desl+acr-desc);
+ const rows=quote.map(x=>`<tr><td>${x.name}</td><td>${x.qty}</td><td>${money(x.price)}</td><td>${money(x.qty*x.price)}</td></tr>`).join("");
+ const win=window.open("","_blank");
+ win.document.write(`<html><head><title>Orçamento - ${cliente}</title><style>body{font-family:Arial;padding:35px;color:#18212b}h1{font-size:24px}table{width:100%;border-collapse:collapse;margin-top:20px}th,td{padding:9px;border-bottom:1px solid #ddd;text-align:left}th{background:#f1f4f8}.total{font-size:22px;font-weight:bold;text-align:right;margin-top:20px}.box{margin:15px 0;padding:12px;background:#f6f7f9;border-radius:8px}@media print{button{display:none}}</style></head><body>
+<h1>⚡ ORÇAMENTO DE SERVIÇOS ELÉTRICOS</h1><div class="box"><b>Cliente:</b> ${cliente}<br><b>Telefone:</b> ${telefone}<br><b>Endereço:</b> ${endereco}<br><b>Data:</b> ${new Date().toLocaleDateString("pt-BR")}</div>
+<table><thead><tr><th>Serviço</th><th>Qtd.</th><th>Unitário</th><th>Total</th></tr></thead><tbody>${rows}</tbody></table>
+<div class="box"><b>Mão de obra:</b> ${money(mao)}<br><b>Materiais:</b> ${money(mat)}<br><b>Deslocamento:</b> ${money(desl)}<br><b>Desconto:</b> ${money(desc)}<br><b>Acréscimo:</b> ${money(acr)}</div>
+<div class="total">TOTAL FINAL: ${money(total)}</div>
+<div class="box"><b>Pagamento:</b> ${document.getElementById("pagamento").value}<br><b>Prazo:</b> ${document.getElementById("prazo").value||"Não informado"}<br><b>Garantia:</b> ${document.getElementById("garantia").value||"Não informado"}<br><b>Observações:</b><br>${(document.getElementById("obs").value||"").replaceAll("\\n","<br>")}</div>
+<p style="font-size:11px;color:#666">Valores de mão de obra baseados na tabela de referência fornecida. Materiais não estão incluídos nos valores dos serviços.</p>
+<script>window.onload=()=>window.print()<\/script></body></html>`);
+ win.document.close();
+}
+renderTags();renderServices();renderQuote();
+</script>
+</body></html>
