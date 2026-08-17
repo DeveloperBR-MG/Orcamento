@@ -36,6 +36,144 @@ label{display:block;font-size:12px;font-weight:700;color:#475467;margin-bottom:5
 .login{position:fixed;inset:0;background:#0f172ae8;display:flex;align-items:center;justify-content:center;z-index:200}.login-box{width:min(420px,92%);background:#fff;border-radius:16px;padding:25px}.hidden{display:none!important}
 @media(max-width:1000px){.sidebar{width:205px}.content{margin-left:205px}.stats{grid-template-columns:repeat(2,1fr)}.quote-layout{grid-template-columns:1fr}}
 @media(max-width:700px){.sidebar{position:static;width:100%;min-height:auto}.content{margin-left:0}.nav{display:flex;overflow:auto}.nav button{white-space:nowrap;width:auto}.nav .section{display:none}.brand{padding-bottom:12px}.topbar{position:static}.grid-2,.grid-3,.grid-4{grid-template-columns:1fr}.stats{grid-template-columns:1fr 1fr}main{padding:14px}}
+
+/* ===== RESPONSIVIDADE APRIMORADA ===== */
+html,body{max-width:100%;overflow-x:hidden}
+img,svg,video,canvas{max-width:100%;height:auto}
+button,input,select,textarea{max-width:100%;min-width:0}
+.content,main,.view,.card{min-width:0}
+.toolbar>*{min-width:0}
+.toolbar input.grow{min-width:160px}
+
+/* Notebooks / telas médias */
+@media (max-width:1200px){
+  main{padding:20px}
+  .quote-layout{grid-template-columns:minmax(0,1fr) minmax(320px,.72fr)}
+  .service-list{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .stats{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+
+/* Tablet */
+@media (max-width:900px){
+  .sidebar{width:190px;padding:16px 10px}
+  .content{margin-left:190px}
+  .topbar{padding:0 16px}
+  main{padding:16px}
+  .quote-layout{grid-template-columns:1fr}
+  .quote-layout>div:last-child{display:grid;grid-template-columns:1fr 1fr;gap:16px;align-items:start}
+  .quote-layout>div:last-child>.card{margin-bottom:0}
+  .quote-layout>div:last-child>.card:first-child{grid-column:1/-1}
+  .quote-layout>div:last-child>.card:last-child{grid-column:1/-1}
+}
+
+/* Tablet pequeno / celular */
+@media (max-width:700px){
+  .sidebar{
+    position:sticky;
+    top:0;
+    width:100%;
+    min-height:0;
+    height:auto;
+    padding:10px;
+    z-index:50;
+    border-bottom:1px solid rgba(255,255,255,.08)
+  }
+  .brand{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:10px;
+    font-size:17px;
+    padding:2px 8px 10px
+  }
+  .brand small{font-size:10px;margin-top:0}
+  .nav{
+    display:grid;
+    grid-template-columns:repeat(4,minmax(0,1fr));
+    gap:4px;
+    overflow:visible
+  }
+  .nav button{
+    width:100%;
+    margin:0;
+    padding:9px 5px;
+    font-size:11px;
+    text-align:center;
+    white-space:normal;
+    line-height:1.15
+  }
+  .nav .section{display:none}
+  .content{margin-left:0}
+  .topbar{
+    min-height:58px;
+    height:auto;
+    padding:10px 12px;
+    gap:10px;
+    flex-wrap:wrap
+  }
+  .topbar h1{font-size:18px;flex:1;min-width:130px}
+  .top-actions{width:100%;display:grid;grid-template-columns:1fr 80px}
+  .top-actions .btn{width:100%}
+  main{padding:12px}
+  .card{padding:14px;border-radius:12px;margin-bottom:12px}
+  .title-row{align-items:flex-start;flex-wrap:wrap}
+  .title-row h2{font-size:16px}
+  .grid-2,.grid-3,.grid-4{grid-template-columns:1fr}
+  .stats{grid-template-columns:1fr 1fr;gap:9px}
+  .stat{padding:13px}
+  .stat strong{font-size:21px;word-break:break-word}
+  .service-list{grid-template-columns:1fr;gap:8px}
+  .service-card{padding:11px}
+  .toolbar{display:grid;grid-template-columns:1fr;gap:8px}
+  .toolbar .grow{width:100%}
+  .toolbar select{max-width:none!important}
+  .quote-layout{display:flex;flex-direction:column;gap:0}
+  .quote-layout>div:last-child{display:flex;flex-direction:column;gap:0}
+  .quote-layout>div:last-child>.card{margin-bottom:12px}
+  .quote-items{max-height:none;overflow:visible}
+  .quote-item{padding:13px 0}
+  .quote-item-top{align-items:flex-start;flex-wrap:wrap}
+  .quote-controls{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+  .quote-controls input,.quote-controls select{width:100%}
+  .quote-controls .btn{width:100%}
+  .quote-total{font-size:20px;display:flex;justify-content:space-between;gap:10px}
+  .sumline{font-size:14px}
+  .table-wrap{width:100%;overflow-x:auto;-webkit-overflow-scrolling:touch}
+  .table{min-width:680px}
+  .modal{padding:8px;align-items:flex-end}
+  .modal-box{
+    width:100%;
+    max-height:94vh;
+    border-radius:16px 16px 0 0;
+    padding:15px
+  }
+  .modal-head{position:sticky;top:-15px;background:#fff;padding:5px 0 12px;z-index:2}
+  textarea{min-height:110px}
+}
+
+/* Celulares pequenos */
+@media (max-width:480px){
+  .nav{grid-template-columns:repeat(3,minmax(0,1fr))}
+  .nav button{font-size:10px;padding:8px 3px}
+  .brand{font-size:16px}
+  .top-actions{grid-template-columns:1fr 72px}
+  main{padding:9px}
+  .card{padding:12px}
+  .stats{grid-template-columns:1fr}
+  .stat strong{font-size:24px}
+  .quote-controls{grid-template-columns:1fr}
+  .quote-total{font-size:18px}
+  .actions{display:grid;grid-template-columns:1fr}
+  .actions .btn{width:100%!important}
+  .login-box{width:calc(100% - 20px);padding:20px}
+}
+
+/* Muito pequeno */
+@media (max-width:360px){
+  .nav button{font-size:9px}
+  .topbar h1{font-size:16px}
+  .btn{padding:9px 10px;font-size:13px}
+}
 </style>
 </head>
 <body>
@@ -100,7 +238,7 @@ label{display:block;font-size:12px;font-weight:700;color:#475467;margin-bottom:5
           <div class="field"><label>Endereço</label><input id="qEndereco" readonly></div>
         </div>
       </div>
-        <div class="card">
+      <div class="card">
         <div class="title-row"><h2>Itens do orçamento</h2></div>
         <div id="quoteItems" class="quote-items"></div>
       </div>
@@ -109,7 +247,7 @@ label{display:block;font-size:12px;font-weight:700;color:#475467;margin-bottom:5
         <div class="toolbar"><input id="servicePickSearch" class="grow" placeholder="Pesquisar serviço..." oninput="renderQuoteServices()"><select id="servicePickCat" style="max-width:220px" onchange="renderQuoteServices()"></select></div>
         <div id="quoteServices" class="service-list"></div>
       </div>
-
+      
     </div>
     <div>
       <div class="card">
