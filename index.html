@@ -223,27 +223,52 @@ renderQuote(); loadServicesFromSupabase().then(()=>{document.getElementById("dbS
 </script>
 
 <style>
-#authOverlay{position:fixed;inset:0;background:rgba(15,23,42,.72);display:none;align-items:center;justify-content:center;z-index:9999;padding:20px}
-.auth-card{width:min(420px,100%);background:#fff;border-radius:18px;padding:26px;box-shadow:0 25px 80px rgba(0,0,0,.3)}
+#authOverlay{position:fixed;inset:0;background:rgba(15,23,42,.72);display:none;align-items:center;justify-content:center;z-index:10000;padding:20px}
+.auth-card{width:min(430px,100%);background:#fff;border-radius:18px;padding:26px;box-shadow:0 25px 80px rgba(0,0,0,.3)}
 .auth-card h2{margin:0 0 8px}.auth-card p{color:#64748b;font-size:14px}
-.auth-card input{width:100%;box-sizing:border-box;padding:12px;border:1px solid #cbd5e1;border-radius:10px;margin:7px 0}
-.auth-card button,.admin-toolbar button{border:0;border-radius:10px;padding:11px 15px;cursor:pointer}
-.auth-primary{width:100%;background:#111827;color:#fff;margin-top:8px}
+.auth-card input,.admin-form input,.admin-form select,.admin-form textarea{width:100%;box-sizing:border-box;padding:10px;border:1px solid #cbd5e1;border-radius:9px;margin:5px 0 10px}
+.auth-card button,.admin-toolbar button,.admin-actions button{border:0;border-radius:9px;padding:10px 14px;cursor:pointer}
+.auth-primary{width:100%;background:#111827;color:#fff;margin-top:5px}
 .auth-error{color:#b91c1c;font-size:13px;min-height:18px;margin-top:8px}
-#adminPanel{display:none;position:fixed;inset:0;background:#f8fafc;z-index:9000;overflow:auto;padding:25px}
-.admin-wrap{max-width:1200px;margin:auto}.admin-toolbar{display:flex;gap:8px;flex-wrap:wrap;margin:15px 0}.admin-toolbar button{background:#e2e8f0}
+#adminPanel{display:none;position:fixed;inset:0;background:#f1f5f9;z-index:9000;overflow:auto}
+.admin-shell{display:flex;min-height:100vh}
+.admin-side{width:235px;background:#0f172a;color:#fff;padding:20px;box-sizing:border-box}
+.admin-side h2{font-size:19px;margin:0 0 20px}
+.admin-nav button{display:block;width:100%;text-align:left;background:transparent;color:#cbd5e1;border:0;padding:11px;border-radius:9px;margin:3px 0;cursor:pointer}
+.admin-nav button.active,.admin-nav button:hover{background:#1e293b;color:#fff}
+.admin-main{flex:1;padding:24px;min-width:0}
+.admin-top{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:20px}
+.admin-top h1{margin:0;font-size:25px}
+.admin-toolbar{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:15px}
+.admin-toolbar button{background:#e2e8f0}
 .admin-toolbar .danger{background:#fee2e2;color:#991b1b}
-.admin-table{width:100%;border-collapse:collapse;background:#fff;border-radius:12px;overflow:hidden}
-.admin-table th,.admin-table td{padding:9px;border-bottom:1px solid #e5e7eb;text-align:left;font-size:13px}
-.admin-table input{width:95px;padding:7px;border:1px solid #cbd5e1;border-radius:7px}
-.admin-badge{display:inline-block;padding:5px 9px;border-radius:999px;background:#dcfce7;color:#166534;font-size:12px}
+.admin-view{display:none}.admin-view.active{display:block}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:14px}
+.stat{background:#fff;border-radius:14px;padding:18px;box-shadow:0 1px 4px rgba(15,23,42,.08)}
+.stat small{color:#64748b}.stat strong{display:block;font-size:27px;margin-top:7px}
+.admin-card{background:#fff;border-radius:14px;padding:18px;margin-bottom:16px;box-shadow:0 1px 4px rgba(15,23,42,.08)}
+.admin-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px}
+.admin-form label{font-size:12px;color:#475569;font-weight:600}
+.admin-form textarea{min-height:80px;resize:vertical}
+.admin-table-wrap{overflow:auto}
+.admin-table{width:100%;border-collapse:collapse;min-width:720px}
+.admin-table th,.admin-table td{padding:9px;border-bottom:1px solid #e5e7eb;text-align:left;font-size:13px;vertical-align:top}
+.admin-table th{background:#f8fafc}
+.admin-table input,.admin-table select{padding:7px;border:1px solid #cbd5e1;border-radius:7px}
+.admin-actions{display:flex;gap:6px;flex-wrap:wrap}.admin-actions button{background:#e2e8f0;padding:7px 9px}
+.badge{display:inline-block;padding:4px 8px;border-radius:999px;background:#dcfce7;color:#166534;font-size:11px}
+.badge.off{background:#e2e8f0;color:#475569}
+.admin-msg{font-size:13px;margin:8px 0;color:#166534}
+@media(max-width:800px){.admin-side{width:190px}.admin-main{padding:15px}}
+@media(max-width:620px){.admin-shell{display:block}.admin-side{width:100%;position:sticky;top:0;z-index:2}.admin-nav{display:flex;overflow:auto;gap:4px}.admin-nav button{white-space:nowrap;width:auto}}
 </style>
-<button onclick="openAuth()" style="position:fixed;right:16px;top:16px;z-index:5000;border:0;border-radius:10px;padding:9px 12px;background:#111827;color:white;cursor:pointer">⚙️ Admin</button>
+
+<button onclick="openAuth()" style="position:fixed;right:16px;top:16px;z-index:5000;border:0;border-radius:10px;padding:9px 12px;background:#111827;color:#fff;cursor:pointer">⚙️ Admin</button>
 
 <div id="authOverlay">
   <div class="auth-card">
     <h2>🔐 Área administrativa</h2>
-    <p>Entre com o usuário administrador criado no Supabase.</p>
+    <p>Use o usuário criado em Supabase → Authentication → Users.</p>
     <input id="authEmail" type="email" placeholder="E-mail">
     <input id="authPassword" type="password" placeholder="Senha">
     <button class="auth-primary" onclick="adminLogin()">Entrar</button>
@@ -253,122 +278,193 @@ renderQuote(); loadServicesFromSupabase().then(()=>{document.getElementById("dbS
 </div>
 
 <div id="adminPanel">
-  <div class="admin-wrap">
-    <h1>⚙️ Administração</h1>
-    <p>Preços e serviços sincronizados com o Supabase.</p>
-    <div class="admin-toolbar">
-      <button onclick="closeAdmin()">← Voltar ao orçamento</button>
-      <button onclick="loadAdminServices()">↻ Atualizar</button>
-      <button class="danger" onclick="adminLogout()">Sair</button>
-    </div>
-    <div id="adminMessage"></div>
-    <div style="overflow:auto">
-      <table class="admin-table">
-        <thead><tr><th>Serviço</th><th>Categoria</th><th>Mínimo</th><th>Médio</th><th>Máximo</th><th>Unidade</th><th>Status</th></tr></thead>
-        <tbody id="adminServices"></tbody>
-      </table>
+<div class="admin-shell">
+<aside class="admin-side">
+  <h2>⚡ Orçamento</h2>
+  <div class="admin-nav">
+    <button data-view="dashboard" class="active" onclick="showAdminView('dashboard')">📊 Dashboard</button>
+    <button data-view="clientes" onclick="showAdminView('clientes')">👥 Clientes</button>
+    <button data-view="orcamentos" onclick="showAdminView('orcamentos')">🧾 Orçamentos</button>
+    <button data-view="servicos" onclick="showAdminView('servicos')">💰 Serviços</button>
+    <button data-view="categorias" onclick="showAdminView('categorias')">🏷️ Categorias</button>
+    <button data-view="materiais" onclick="showAdminView('materiais')">📦 Materiais</button>
+    <button data-view="config" onclick="showAdminView('config')">⚙️ Configurações</button>
+  </div>
+</aside>
+<main class="admin-main">
+  <div class="admin-top">
+    <h1 id="adminTitle">Dashboard</h1>
+    <div class="admin-actions">
+      <button onclick="closeAdmin()">← Orçamento</button>
+      <button onclick="adminLogout()">Sair</button>
     </div>
   </div>
+
+  <section id="view-dashboard" class="admin-view active">
+    <div class="stats">
+      <div class="stat"><small>Serviços ativos</small><strong id="statServices">-</strong></div>
+      <div class="stat"><small>Categorias ativas</small><strong id="statCategories">-</strong></div>
+      <div class="stat"><small>Clientes</small><strong id="statClients">-</strong></div>
+      <div class="stat"><small>Orçamentos</small><strong id="statQuotes">-</strong></div>
+      <div class="stat"><small>Total orçado</small><strong id="statTotal">R$ 0,00</strong></div>
+    </div>
+    <div class="admin-card" style="margin-top:16px">
+      <h3>Orçamentos recentes</h3>
+      <div class="admin-table-wrap"><table class="admin-table"><thead><tr><th>Nº</th><th>Cliente</th><th>Status</th><th>Total</th><th>Data</th></tr></thead><tbody id="recentQuotes"></tbody></table></div>
+    </div>
+  </section>
+
+  <section id="view-clientes" class="admin-view">
+    <div class="admin-toolbar"><button onclick="newClient()">＋ Novo cliente</button><button onclick="loadClients()">↻ Atualizar</button></div>
+    <div class="admin-card admin-form" id="clientForm" style="display:none">
+      <h3 id="clientFormTitle">Novo cliente</h3>
+      <input type="hidden" id="clientId">
+      <div class="admin-grid">
+        <div><label>Nome</label><input id="clientNome"></div>
+        <div><label>Telefone / WhatsApp</label><input id="clientTelefone"></div>
+        <div><label>E-mail</label><input id="clientEmail"></div>
+        <div><label>CEP</label><input id="clientCep"></div>
+        <div><label>Rua</label><input id="clientRua"></div>
+        <div><label>Número</label><input id="clientNumero"></div>
+        <div><label>Complemento</label><input id="clientComplemento"></div>
+        <div><label>Bairro</label><input id="clientBairro"></div>
+        <div><label>Cidade</label><input id="clientCidade"></div>
+        <div><label>Estado</label><input id="clientEstado"></div>
+      </div>
+      <label>Observações</label><textarea id="clientObs"></textarea>
+      <div class="admin-actions"><button onclick="saveClient()">Salvar</button><button onclick="cancelClient()">Cancelar</button></div>
+      <div id="clientMsg" class="admin-msg"></div>
+    </div>
+    <div class="admin-card"><input id="clientSearch" placeholder="🔎 Pesquisar cliente..." oninput="renderClients()"><div class="admin-table-wrap"><table class="admin-table"><thead><tr><th>Nome</th><th>Telefone</th><th>E-mail</th><th>Cidade</th><th>Ações</th></tr></thead><tbody id="clientsBody"></tbody></table></div></div>
+  </section>
+
+  <section id="view-orcamentos" class="admin-view">
+    <div class="admin-toolbar"><button onclick="showAdminView('dashboard')">← Dashboard</button><button onclick="loadQuotes()">↻ Atualizar</button></div>
+    <div class="admin-card"><input id="quoteSearch" placeholder="🔎 Pesquisar nº, cliente ou status..." oninput="renderQuotes()"><div class="admin-table-wrap"><table class="admin-table"><thead><tr><th>Nº</th><th>Cliente</th><th>Status</th><th>Mão de obra</th><th>Materiais</th><th>Total</th><th>Data</th></tr></thead><tbody id="quotesBody"></tbody></table></div></div>
+  </section>
+
+  <section id="view-servicos" class="admin-view">
+    <div class="admin-toolbar"><button onclick="loadAdminServices()">↻ Atualizar</button></div>
+    <div class="admin-card"><input id="serviceSearch" placeholder="🔎 Pesquisar serviço..." oninput="renderAdminServices()"><div class="admin-table-wrap"><table class="admin-table"><thead><tr><th>Serviço</th><th>Categoria</th><th>Mínimo</th><th>Médio</th><th>Máximo</th><th>Unidade</th><th>Status</th></tr></thead><tbody id="servicesBody"></tbody></table></div></div>
+  </section>
+
+  <section id="view-categorias" class="admin-view">
+    <div class="admin-toolbar"><button onclick="newCategory()">＋ Nova categoria</button><button onclick="loadCategories()">↻ Atualizar</button></div>
+    <div class="admin-card admin-form" id="categoryForm" style="display:none">
+      <h3>Categoria</h3><input type="hidden" id="catId">
+      <div class="admin-grid"><div><label>Nome</label><input id="catNome"></div><div><label>Ícone</label><input id="catIcone" placeholder="💡"></div><div><label>Cor</label><input id="catCor" placeholder="#2563eb"></div><div><label>Ordem</label><input id="catOrdem" type="number" value="0"></div></div>
+      <label><input id="catAtivo" type="checkbox" checked> Ativa</label>
+      <div class="admin-actions"><button onclick="saveCategory()">Salvar</button><button onclick="cancelCategory()">Cancelar</button></div><div id="catMsg" class="admin-msg"></div>
+    </div>
+    <div class="admin-card"><div class="admin-table-wrap"><table class="admin-table"><thead><tr><th>Nome</th><th>Ícone</th><th>Cor</th><th>Ordem</th><th>Status</th><th>Ações</th></tr></thead><tbody id="categoriesBody"></tbody></table></div></div>
+  </section>
+
+  <section id="view-materiais" class="admin-view">
+    <div class="admin-toolbar"><button onclick="newMaterial()">＋ Novo material</button><button onclick="loadMaterials()">↻ Atualizar</button></div>
+    <div class="admin-card admin-form" id="materialForm" style="display:none">
+      <h3>Material</h3><input type="hidden" id="matId">
+      <div class="admin-grid"><div><label>Nome</label><input id="matNome"></div><div><label>Unidade</label><input id="matUnidade" placeholder="unidade"></div><div><label>Custo</label><input id="matCusto" type="number" step="0.01"></div><div><label>Preço de venda</label><input id="matVenda" type="number" step="0.01"></div><div><label>Estoque</label><input id="matEstoque" type="number" step="0.01"></div></div>
+      <label>Descrição</label><textarea id="matDescricao"></textarea><label><input id="matAtivo" type="checkbox" checked> Ativo</label>
+      <div class="admin-actions"><button onclick="saveMaterial()">Salvar</button><button onclick="cancelMaterial()">Cancelar</button></div><div id="matMsg" class="admin-msg"></div>
+    </div>
+    <div class="admin-card"><input id="materialSearch" placeholder="🔎 Pesquisar material..." oninput="renderMaterials()"><div class="admin-table-wrap"><table class="admin-table"><thead><tr><th>Nome</th><th>Unidade</th><th>Custo</th><th>Venda</th><th>Estoque</th><th>Status</th><th>Ações</th></tr></thead><tbody id="materialsBody"></tbody></table></div></div>
+  </section>
+
+  <section id="view-config" class="admin-view">
+    <div class="admin-card">
+      <h3>Configurações</h3>
+      <p style="color:#64748b;font-size:13px">Edite os valores cadastrados na tabela <code>configuracoes</code>. As chaves existentes serão carregadas automaticamente.</p>
+      <div id="configList" class="admin-form"></div>
+      <div class="admin-actions"><button onclick="saveConfigs()">Salvar configurações</button></div><div id="configMsg" class="admin-msg"></div>
+    </div>
+  </section>
+</main>
+</div>
 </div>
 
 <script>
 const SUPABASE_AUTH_URL = SUPABASE_URL + "/auth/v1";
+let adminServices = [], adminClients = [], adminQuotes = [], adminCategories = [], adminMaterials = [], adminConfigs = [];
 
-function openAuth(){
-  document.getElementById("authOverlay").style.display="flex";
-  document.getElementById("authEmail").focus();
+function esc(v){return String(v ?? "").replace(/[&<>"\']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","\'":"&#39;"}[c]));}
+function adminMoney(v){return Number(v||0).toLocaleString("pt-BR",{style:"currency",currency:"BRL"});}
+function token(){return localStorage.getItem("sb_access_token")||"";}
+function headers(auth=true){const h={"apikey":SUPABASE_KEY,"Content-Type":"application/json"};if(auth)h.Authorization="Bearer "+token();return h;}
+async function api(table,opts={}){
+  const r=await fetch(SUPABASE_URL+"/rest/v1/"+table,{
+    method:opts.method||"GET",
+    headers:{...headers(true),...(opts.headers||{}),...(opts.method&&opts.method!=="GET"?{"Prefer":"return=representation"}:{})},
+    body:opts.body?JSON.stringify(opts.body):undefined
+  });
+  const text=await r.text(); let data=null; try{data=text?JSON.parse(text):null}catch(_){}
+  if(!r.ok) throw new Error((data&&data.message)||("Supabase "+r.status+": "+text));
+  return data;
 }
-function closeAuth(){
-  document.getElementById("authOverlay").style.display="none";
-  document.getElementById("authError").textContent="";
-}
-function authHeaders(){
-  return {"apikey":SUPABASE_KEY,"Content-Type":"application/json"};
-}
+function openAuth(){document.getElementById("authOverlay").style.display="flex";document.getElementById("authEmail").focus();}
+function closeAuth(){document.getElementById("authOverlay").style.display="none";document.getElementById("authError").textContent="";}
 async function adminLogin(){
-  const email=document.getElementById("authEmail").value.trim();
-  const password=document.getElementById("authPassword").value;
-  const err=document.getElementById("authError");
-  err.textContent="";
-  if(!email||!password){err.textContent="Informe e-mail e senha.";return;}
+  const email=document.getElementById("authEmail").value.trim(), password=document.getElementById("authPassword").value, err=document.getElementById("authError");
+  err.textContent=""; if(!email||!password){err.textContent="Informe e-mail e senha.";return;}
   try{
-    const r=await fetch(SUPABASE_AUTH_URL+"/token?grant_type=password",{
-      method:"POST",
-      headers:authHeaders(),
-      body:JSON.stringify({email,password})
-    });
-    const data=await r.json();
-    if(!r.ok) throw new Error(data.error_description||data.msg||"Falha no login");
-    localStorage.setItem("sb_access_token",data.access_token);
-    localStorage.setItem("sb_refresh_token",data.refresh_token||"");
-    closeAuth();
-    document.getElementById("adminPanel").style.display="block";
-    await loadAdminServices();
-  }catch(e){
-    err.textContent=e.message;
-  }
+    const r=await fetch(SUPABASE_AUTH_URL+"/token?grant_type=password",{method:"POST",headers:headers(false),body:JSON.stringify({email,password})});
+    const d=await r.json(); if(!r.ok)throw new Error(d.error_description||d.msg||"Falha no login");
+    localStorage.setItem("sb_access_token",d.access_token);localStorage.setItem("sb_refresh_token",d.refresh_token||"");
+    closeAuth();document.getElementById("adminPanel").style.display="block";await loadDashboard();
+  }catch(e){err.textContent=e.message;}
 }
-function adminToken(){
-  return localStorage.getItem("sb_access_token")||"";
+function adminLogout(){localStorage.removeItem("sb_access_token");localStorage.removeItem("sb_refresh_token");document.getElementById("adminPanel").style.display="none";}
+function closeAdmin(){document.getElementById("adminPanel").style.display="none";}
+function showAdminView(view){
+  document.querySelectorAll(".admin-view").forEach(x=>x.classList.remove("active"));
+  document.getElementById("view-"+view).classList.add("active");
+  document.querySelectorAll(".admin-nav button").forEach(x=>x.classList.toggle("active",x.dataset.view===view));
+  const titles={dashboard:"Dashboard",clientes:"Clientes",orcamentos:"Orçamentos",servicos:"Serviços",categorias:"Categorias",materiais:"Materiais",config:"Configurações"};
+  document.getElementById("adminTitle").textContent=titles[view]||view;
+  const fn={dashboard:loadDashboard,clientes:loadClients,orcamentos:loadQuotes,servicos:loadAdminServices,categorias:loadCategories,materiais:loadMaterials,config:loadConfigs}[view]; if(fn)fn();
 }
-function adminHeaders(){
-  return {
-    "apikey":SUPABASE_KEY,
-    "Authorization":"Bearer "+adminToken(),
-    "Content-Type":"application/json",
-    "Prefer":"return=minimal"
-  };
-}
-async function loadAdminServices(){
-  const tbody=document.getElementById("adminServices");
-  tbody.innerHTML='<tr><td colspan="7">Carregando...</td></tr>';
+async function loadDashboard(){
   try{
-    const r=await fetch(
-      SUPABASE_URL+"/rest/v1/servicos?select=id,nome,preco_minimo,preco_medio,preco_maximo,unidade,ativo,categorias(nome)&order=id",
-      {headers:adminHeaders()}
-    );
-    if(!r.ok) throw new Error("Não foi possível carregar os serviços ("+r.status+").");
-    const rows=await r.json();
-    tbody.innerHTML=rows.map(s=>`
-      <tr>
-        <td>${escapeHtml(s.nome)}</td>
-        <td>${escapeHtml(s.categorias?.nome||"")}</td>
-        <td><input type="number" step="0.01" value="${Number(s.preco_minimo).toFixed(2)}" onchange="saveAdminPrice(${s.id},'preco_minimo',this.value)"></td>
-        <td><input type="number" step="0.01" value="${Number(s.preco_medio).toFixed(2)}" onchange="saveAdminPrice(${s.id},'preco_medio',this.value)"></td>
-        <td><input type="number" step="0.01" value="${Number(s.preco_maximo).toFixed(2)}" onchange="saveAdminPrice(${s.id},'preco_maximo',this.value)"></td>
-        <td>${escapeHtml(s.unidade||"")}</td>
-        <td>${s.ativo?'<span class="admin-badge">Ativo</span>':'Inativo'}</td>
-      </tr>`).join("");
-  }catch(e){
-    tbody.innerHTML='<tr><td colspan="7">'+escapeHtml(e.message)+'</td></tr>';
-  }
+    const [s,c,cl,o]=await Promise.all([
+      api("servicos?select=id&ativo=eq.true"),
+      api("categorias?select=id&ativo=eq.true"),
+      api("clientes?select=id"),
+      api("orcamentos?select=id,numero,cliente_id,status,total,created_at&order=created_at.desc&limit=10")
+    ]);
+    adminServices=s||[];document.getElementById("statServices").textContent=(s||[]).length;
+    document.getElementById("statCategories").textContent=(c||[]).length;
+    document.getElementById("statClients").textContent=(cl||[]).length;
+    document.getElementById("statQuotes").textContent=(o||[]).length;
+    const total=(o||[]).reduce((a,x)=>a+Number(x.total||0),0);document.getElementById("statTotal").textContent=adminMoney(total);
+    adminQuotes=o||[]; renderRecentQuotes();
+  }catch(e){document.getElementById("recentQuotes").innerHTML='<tr><td colspan="5">'+esc(e.message)+'</td></tr>';}
 }
-async function saveAdminPrice(id,field,value){
-  const n=Math.max(0,Number(value)||0);
-  try{
-    const r=await fetch(SUPABASE_URL+"/rest/v1/servicos?id=eq."+id,{
-      method:"PATCH",
-      headers:adminHeaders(),
-      body:JSON.stringify({[field]:n})
-    });
-    if(!r.ok) throw new Error("Falha ao salvar preço ("+r.status+").");
-    document.getElementById("adminMessage").innerHTML='<span class="admin-badge">Preço salvo.</span>';
-    await loadServicesFromSupabase();
-  }catch(e){
-    alert(e.message);
-    await loadAdminServices();
-  }
-}
-function closeAdmin(){
-  document.getElementById("adminPanel").style.display="none";
-}
-function adminLogout(){
-  localStorage.removeItem("sb_access_token");
-  localStorage.removeItem("sb_refresh_token");
-  closeAdmin();
-}
-function escapeHtml(v){
-  return String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"}[c]));
-}
+function renderRecentQuotes(){document.getElementById("recentQuotes").innerHTML=adminQuotes.map(q=>`<tr><td>${esc(q.numero||q.id)}</td><td>${esc(q.cliente_id||"")}</td><td>${esc(q.status||"")}</td><td>${adminMoney(q.total)}</td><td>${q.created_at?new Date(q.created_at).toLocaleDateString("pt-BR"):""}</td></tr>`).join("")||'<tr><td colspan="5">Nenhum orçamento.</td></tr>';}
+async function loadClients(){try{adminClients=await api("clientes?select=*&order=nome")||[];renderClients();}catch(e){document.getElementById("clientsBody").innerHTML='<tr><td colspan="5">'+esc(e.message)+'</td></tr>';}}
+function renderClients(){const q=(document.getElementById("clientSearch").value||"").toLowerCase();const rows=adminClients.filter(x=>JSON.stringify(x).toLowerCase().includes(q));document.getElementById("clientsBody").innerHTML=rows.map(c=>`<tr><td>${esc(c.nome)}</td><td>${esc(c.telefone)}</td><td>${esc(c.email)}</td><td>${esc(c.cidade)}</td><td class="admin-actions"><button onclick='editClient(${JSON.stringify(c)})'>Editar</button><button onclick="deleteClient(${c.id})">Excluir</button></td></tr>`).join("")||'<tr><td colspan="5">Nenhum cliente.</td></tr>';}
+function newClient(){document.getElementById("clientForm").style.display="block";["clientId","clientNome","clientTelefone","clientEmail","clientCep","clientRua","clientNumero","clientComplemento","clientBairro","clientCidade","clientEstado","clientObs"].forEach(id=>document.getElementById(id).value="");}
+function editClient(c){newClient();document.getElementById("clientId").value=c.id;document.getElementById("clientNome").value=c.nome||"";document.getElementById("clientTelefone").value=c.telefone||"";document.getElementById("clientEmail").value=c.email||"";document.getElementById("clientCep").value=c.cep||"";document.getElementById("clientRua").value=c.rua||c.endereco||"";document.getElementById("clientNumero").value=c.numero||"";document.getElementById("clientComplemento").value=c.complemento||"";document.getElementById("clientBairro").value=c.bairro||"";document.getElementById("clientCidade").value=c.cidade||"";document.getElementById("clientEstado").value=c.estado||"";document.getElementById("clientObs").value=c.observacoes||"";}
+function cancelClient(){document.getElementById("clientForm").style.display="none";}
+async function saveClient(){const id=document.getElementById("clientId").value;const body={nome:document.getElementById("clientNome").value.trim(),telefone:document.getElementById("clientTelefone").value.trim(),email:document.getElementById("clientEmail").value.trim(),cep:document.getElementById("clientCep").value.trim(),rua:document.getElementById("clientRua").value.trim(),numero:document.getElementById("clientNumero").value.trim(),complemento:document.getElementById("clientComplemento").value.trim(),bairro:document.getElementById("clientBairro").value.trim(),cidade:document.getElementById("clientCidade").value.trim(),estado:document.getElementById("clientEstado").value.trim(),observacoes:document.getElementById("clientObs").value.trim()};try{if(id)await api("clientes?id=eq."+id,{method:"PATCH",body});else await api("clientes",{method:"POST",body});cancelClient();await loadClients();}catch(e){document.getElementById("clientMsg").textContent=e.message;}}
+async function deleteClient(id){if(!confirm("Excluir este cliente?"))return;try{await api("clientes?id=eq."+id,{method:"DELETE"});await loadClients();}catch(e){alert(e.message);}}
+async function loadQuotes(){try{adminQuotes=await api("orcamentos?select=*&order=created_at.desc")||[];renderQuotes();}catch(e){document.getElementById("quotesBody").innerHTML='<tr><td colspan="7">'+esc(e.message)+'</td></tr>';}}
+function renderQuotes(){const q=(document.getElementById("quoteSearch").value||"").toLowerCase();const rows=adminQuotes.filter(x=>JSON.stringify(x).toLowerCase().includes(q));document.getElementById("quotesBody").innerHTML=rows.map(x=>`<tr><td>${esc(x.numero||x.id)}</td><td>${esc(x.cliente_id||"")}</td><td>${esc(x.status||"")}</td><td>${adminMoney(x.mao_de_obra)}</td><td>${adminMoney(x.materiais)}</td><td>${adminMoney(x.total)}</td><td>${x.created_at?new Date(x.created_at).toLocaleDateString("pt-BR"):""}</td></tr>`).join("")||'<tr><td colspan="7">Nenhum orçamento.</td></tr>';}
+async function loadAdminServices(){try{adminServices=await api("servicos?select=*,categorias(nome)&order=id")||[];renderAdminServices();}catch(e){document.getElementById("servicesBody").innerHTML='<tr><td colspan="7">'+esc(e.message)+'</td></tr>';}}
+function renderAdminServices(){const q=(document.getElementById("serviceSearch").value||"").toLowerCase();const rows=adminServices.filter(x=>JSON.stringify(x).toLowerCase().includes(q));document.getElementById("servicesBody").innerHTML=rows.map(s=>`<tr><td>${esc(s.nome)}</td><td>${esc(s.categorias?.nome||"")}</td><td><input type="number" step=".01" value="${Number(s.preco_minimo||0).toFixed(2)}" onchange="saveServicePrice(${s.id},'preco_minimo',this.value)"></td><td><input type="number" step=".01" value="${Number(s.preco_medio||0).toFixed(2)}" onchange="saveServicePrice(${s.id},'preco_medio',this.value)"></td><td><input type="number" step=".01" value="${Number(s.preco_maximo||0).toFixed(2)}" onchange="saveServicePrice(${s.id},'preco_maximo',this.value)"></td><td>${esc(s.unidade)}</td><td>${s.ativo?'<span class="badge">Ativo</span>':'<span class="badge off">Inativo</span>'}</td></tr>`).join("")||'<tr><td colspan="7">Nenhum serviço.</td></tr>';}
+async function saveServicePrice(id,field,value){try{await api("servicos?id=eq."+id,{method:"PATCH",body:{[field]:Math.max(0,Number(value)||0)}});await loadAdminServices();await loadServicesFromSupabase();}catch(e){alert(e.message);await loadAdminServices();}}
+async function loadCategories(){try{adminCategories=await api("categorias?select=*&order=ordem,nome")||[];renderCategories();}catch(e){document.getElementById("categoriesBody").innerHTML='<tr><td colspan="6">'+esc(e.message)+'</td></tr>';}}
+function renderCategories(){document.getElementById("categoriesBody").innerHTML=adminCategories.map(c=>`<tr><td>${esc(c.nome)}</td><td>${esc(c.icone)}</td><td>${esc(c.cor)}</td><td>${esc(c.ordem)}</td><td>${c.ativo?'<span class="badge">Ativa</span>':'<span class="badge off">Inativa</span>'}</td><td class="admin-actions"><button onclick='editCategory(${JSON.stringify(c)})'>Editar</button></td></tr>`).join("")||'<tr><td colspan="6">Nenhuma categoria.</td></tr>';}
+function newCategory(){document.getElementById("categoryForm").style.display="block";document.getElementById("catId").value="";document.getElementById("catNome").value="";document.getElementById("catIcone").value="";document.getElementById("catCor").value="";document.getElementById("catOrdem").value="0";document.getElementById("catAtivo").checked=true;}
+function editCategory(c){newCategory();document.getElementById("catId").value=c.id;document.getElementById("catNome").value=c.nome||"";document.getElementById("catIcone").value=c.icone||"";document.getElementById("catCor").value=c.cor||"";document.getElementById("catOrdem").value=c.ordem||0;document.getElementById("catAtivo").checked=!!c.ativo;}
+function cancelCategory(){document.getElementById("categoryForm").style.display="none";}
+async function saveCategory(){const id=document.getElementById("catId").value;const body={nome:document.getElementById("catNome").value.trim(),icone:document.getElementById("catIcone").value.trim(),cor:document.getElementById("catCor").value.trim(),ordem:Number(document.getElementById("catOrdem").value)||0,ativo:document.getElementById("catAtivo").checked};try{if(id)await api("categorias?id=eq."+id,{method:"PATCH",body});else await api("categorias",{method:"POST",body});cancelCategory();await loadCategories();await loadServicesFromSupabase();}catch(e){document.getElementById("catMsg").textContent=e.message;}}
+async function loadMaterials(){try{adminMaterials=await api("materiais?select=*&order=nome")||[];renderMaterials();}catch(e){document.getElementById("materialsBody").innerHTML='<tr><td colspan="7">'+esc(e.message)+'</td></tr>';}}
+function renderMaterials(){const q=(document.getElementById("materialSearch").value||"").toLowerCase();const rows=adminMaterials.filter(x=>JSON.stringify(x).toLowerCase().includes(q));document.getElementById("materialsBody").innerHTML=rows.map(m=>`<tr><td>${esc(m.nome)}</td><td>${esc(m.unidade)}</td><td>${adminMoney(m.custo)}</td><td>${adminMoney(m.preco_venda)}</td><td>${esc(m.estoque)}</td><td>${m.ativo?'<span class="badge">Ativo</span>':'<span class="badge off">Inativo</span>'}</td><td class="admin-actions"><button onclick='editMaterial(${JSON.stringify(m)})'>Editar</button><button onclick="deleteMaterial(${m.id})">Excluir</button></td></tr>`).join("")||'<tr><td colspan="7">Nenhum material.</td></tr>';}
+function newMaterial(){document.getElementById("materialForm").style.display="block";["matId","matNome","matUnidade","matCusto","matVenda","matEstoque","matDescricao"].forEach(id=>document.getElementById(id).value="");document.getElementById("matAtivo").checked=true;}
+function editMaterial(m){newMaterial();document.getElementById("matId").value=m.id;document.getElementById("matNome").value=m.nome||"";document.getElementById("matUnidade").value=m.unidade||"";document.getElementById("matCusto").value=m.custo||0;document.getElementById("matVenda").value=m.preco_venda||0;document.getElementById("matEstoque").value=m.estoque||0;document.getElementById("matDescricao").value=m.descricao||"";document.getElementById("matAtivo").checked=!!m.ativo;}
+function cancelMaterial(){document.getElementById("materialForm").style.display="none";}
+async function saveMaterial(){const id=document.getElementById("matId").value;const body={nome:document.getElementById("matNome").value.trim(),unidade:document.getElementById("matUnidade").value.trim(),custo:Number(document.getElementById("matCusto").value)||0,preco_venda:Number(document.getElementById("matVenda").value)||0,estoque:Number(document.getElementById("matEstoque").value)||0,descricao:document.getElementById("matDescricao").value.trim(),ativo:document.getElementById("matAtivo").checked};try{if(id)await api("materiais?id=eq."+id,{method:"PATCH",body});else await api("materiais",{method:"POST",body});cancelMaterial();await loadMaterials();}catch(e){document.getElementById("matMsg").textContent=e.message;}}
+async function deleteMaterial(id){if(!confirm("Excluir este material?"))return;try{await api("materiais?id=eq."+id,{method:"DELETE"});await loadMaterials();}catch(e){alert(e.message);}}
+async function loadConfigs(){try{adminConfigs=await api("configuracoes?select=*&order=chave")||[];document.getElementById("configList").innerHTML=adminConfigs.map((c,i)=>`<label>${esc(c.chave)}<input data-config-index="${i}" value="${esc(c.valor)}"></label>`).join("")||"<p>Nenhuma configuração cadastrada.</p>";}catch(e){document.getElementById("configList").innerHTML='<p>'+esc(e.message)+'</p>';}}
+async function saveConfigs(){try{for(const [i,c] of adminConfigs.entries()){const el=document.querySelector('[data-config-index="'+i+'"]');if(el)await api("configuracoes?id=eq."+c.id,{method:"PATCH",body:{valor:el.value}});}document.getElementById("configMsg").textContent="Configurações salvas.";await loadConfigs();}catch(e){document.getElementById("configMsg").textContent=e.message;}}
 </script>
 </body></html>
