@@ -5,466 +5,339 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Orçamento Elétrico</title>
 <style>
-:root{--bg:#f4f6f8;--card:#fff;--text:#18212b;--muted:#6b7280;--primary:#1769e0;--danger:#dc3545;--border:#e3e7ed;--shadow:0 8px 25px #00000012}
+:root{
+  --bg:#f5f7fb;--card:#fff;--text:#172033;--muted:#667085;--primary:#1769e0;
+  --primary-dark:#0f55bd;--border:#e4e7ec;--success:#16803a;--warning:#b7791f;
+  --danger:#c62828;--sidebar:#101827;--shadow:0 4px 18px rgba(16,24,40,.07)
+}
 *{box-sizing:border-box}body{margin:0;font-family:Arial,Helvetica,sans-serif;background:var(--bg);color:var(--text)}
-header{background:#101827;color:#fff;padding:18px 22px;position:sticky;top:0;z-index:10;box-shadow:0 2px 12px #0003}
-.header{max-width:1200px;margin:auto;display:flex;justify-content:space-between;align-items:center;gap:15px}.brand{font-size:21px;font-weight:800}.sub{font-size:12px;color:#b9c3d2;margin-top:4px}
-button{border:0;border-radius:9px;padding:10px 14px;cursor:pointer;font-weight:700}.adminBtn{background:#fff;color:#101827}
-main{max-width:1200px;margin:22px auto;padding:0 15px}.grid{display:grid;grid-template-columns:1.35fr .9fr;gap:20px}
-.card{background:var(--card);border:1px solid var(--border);border-radius:15px;padding:18px;box-shadow:var(--shadow);margin-bottom:18px}
-h2{font-size:18px;margin:0 0 15px}h3{font-size:15px;margin:0 0 10px}
-.search{width:100%;padding:14px;border:1px solid var(--border);border-radius:10px;font-size:15px;outline:none}.search:focus{border-color:var(--primary)}
-.tags{display:flex;flex-wrap:wrap;gap:8px;margin:13px 0}.tag{background:#eef2f7;color:#394554;border-radius:999px;padding:8px 12px;font-size:12px}.tag.active{background:#1769e0;color:white}
-.services{display:grid;gap:10px;max-height:560px;overflow:auto;padding-right:3px}.service{border:1px solid var(--border);border-radius:11px;padding:13px;display:grid;grid-template-columns:1fr auto;gap:10px}.service-title{font-weight:700;font-size:14px}.cat{font-size:11px;color:var(--muted);margin-top:4px}.prices{font-size:11px;color:#5b6572;margin-top:8px}.add{background:#1769e0;color:#fff;align-self:center}.empty{text-align:center;color:var(--muted);padding:25px}
-.row{display:grid;grid-template-columns:1fr 1fr;gap:10px}.field{margin-bottom:11px}.field label{display:block;font-size:12px;font-weight:700;margin-bottom:5px}.field input,.field select,.field textarea{width:100%;padding:10px;border:1px solid var(--border);border-radius:9px;background:#fff}.field textarea{min-height:70px;resize:vertical}
-.quote-item{border-bottom:1px solid var(--border);padding:11px 0}.qi-top{display:flex;justify-content:space-between;gap:8px}.qi-name{font-weight:700;font-size:13px}.qi-sub{font-size:11px;color:var(--muted);margin-top:4px}.qty{width:65px;padding:5px;border:1px solid var(--border);border-radius:6px}.remove{background:#fff;color:var(--danger);padding:3px 7px}
-.summary{border-top:2px solid var(--border);padding-top:12px;margin-top:10px}.sumline{display:flex;justify-content:space-between;margin:7px 0;font-size:13px}.total{font-size:20px;font-weight:900;margin-top:12px}.primary{background:#1769e0;color:#fff;width:100%;margin-top:10px}.secondary{background:#eaf0f8;color:#18324f;width:100%;margin-top:8px}
-.admin{display:none}.admin.show{display:block}.admin-grid{display:grid;grid-template-columns:1fr 1fr;gap:15px}.admin-item{border:1px solid var(--border);padding:10px;border-radius:9px;display:grid;grid-template-columns:1fr 95px 95px 95px;gap:7px;align-items:center}.admin-item input{width:100%;padding:7px;border:1px solid var(--border);border-radius:6px}.notice{font-size:12px;background:#fff8df;border:1px solid #f1df9b;padding:10px;border-radius:9px;color:#6c5a1c}
-@media(max-width:850px){.grid,.admin-grid{grid-template-columns:1fr}.service{grid-template-columns:1fr}.add{width:100%}.header{align-items:flex-start}.admin-item{grid-template-columns:1fr 1fr 1fr 1fr}}
+button,input,select,textarea{font:inherit}button{cursor:pointer}
+.app{min-height:100vh}.sidebar{position:fixed;left:0;top:0;bottom:0;width:240px;background:var(--sidebar);color:#fff;padding:20px 14px;z-index:20}
+.brand{font-size:20px;font-weight:800;padding:4px 10px 22px}.brand small{display:block;color:#9ca8ba;font-size:11px;font-weight:400;margin-top:5px}
+.nav button{display:block;width:100%;border:0;background:transparent;color:#cbd5e1;text-align:left;padding:11px 12px;border-radius:9px;margin:3px 0;font-weight:700}
+.nav button:hover,.nav button.active{background:#1e293b;color:#fff}.nav .section{color:#7f8da3;font-size:10px;text-transform:uppercase;margin:18px 10px 6px}
+.content{margin-left:240px;min-height:100vh}.topbar{height:64px;background:#fff;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;padding:0 24px;position:sticky;top:0;z-index:10}
+.topbar h1{font-size:21px;margin:0}.top-actions{display:flex;gap:8px}
+main{padding:24px;max-width:1500px;margin:auto}.view{display:none}.view.active{display:block}
+.card{background:var(--card);border:1px solid var(--border);border-radius:14px;box-shadow:var(--shadow);padding:18px;margin-bottom:18px}
+.grid{display:grid;gap:16px}.grid-2{grid-template-columns:repeat(2,minmax(0,1fr))}.grid-3{grid-template-columns:repeat(3,minmax(0,1fr))}.grid-4{grid-template-columns:repeat(4,minmax(0,1fr))}
+.stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px}.stat{background:#fff;border:1px solid var(--border);border-radius:14px;padding:18px;box-shadow:var(--shadow)}.stat small{color:var(--muted)}.stat strong{display:block;font-size:27px;margin-top:7px}
+.toolbar{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:15px}.toolbar .grow{flex:1}
+input,select,textarea{width:100%;padding:10px 11px;border:1px solid #d0d5dd;border-radius:9px;background:#fff;color:var(--text);outline:none}
+input:focus,select:focus,textarea:focus{border-color:var(--primary);box-shadow:0 0 0 3px #1769e01a}
+label{display:block;font-size:12px;font-weight:700;color:#475467;margin-bottom:5px}.field{margin-bottom:11px}
+.btn{border:0;border-radius:9px;padding:10px 13px;font-weight:700;background:#e9eef6;color:#1d2939}.btn.primary{background:var(--primary);color:#fff}.btn.primary:hover{background:var(--primary-dark)}.btn.success{background:#dcfce7;color:#166534}.btn.danger{background:#fee2e2;color:#991b1b}.btn.dark{background:#111827;color:#fff}.btn.small{padding:7px 9px;font-size:12px}
+.table-wrap{overflow:auto}.table{width:100%;border-collapse:collapse;min-width:760px}.table th,.table td{padding:10px;border-bottom:1px solid var(--border);text-align:left;font-size:13px;vertical-align:middle}.table th{background:#f8fafc;color:#475467}.actions{display:flex;gap:5px;flex-wrap:wrap}
+.badge{display:inline-block;padding:5px 8px;border-radius:999px;font-size:11px;font-weight:700;background:#e2e8f0;color:#475467}.badge.green{background:#dcfce7;color:#166534}.badge.yellow{background:#fef3c7;color:#92400e}.badge.red{background:#fee2e2;color:#991b1b}.badge.blue{background:#dbeafe;color:#1d4ed8}
+.empty{text-align:center;padding:28px;color:var(--muted)}.muted{color:var(--muted);font-size:12px}.title-row{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:15px}.title-row h2{margin:0;font-size:17px}
+.service-list{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:10px}.service-card{border:1px solid var(--border);border-radius:11px;padding:13px;display:flex;justify-content:space-between;gap:10px}.service-card strong{font-size:14px}.service-card .price{font-size:12px;color:var(--muted);margin-top:5px}
+.quote-layout{display:grid;grid-template-columns:1.15fr .85fr;gap:18px}.quote-items{max-height:420px;overflow:auto}.quote-item{border-bottom:1px solid var(--border);padding:12px 0}.quote-item:last-child{border-bottom:0}.quote-item-top{display:flex;justify-content:space-between;gap:8px}.quote-controls{display:flex;gap:7px;align-items:center;margin-top:8px}.quote-controls input{width:75px}.quote-controls select{width:145px}.quote-total{font-size:22px;font-weight:900;border-top:2px solid var(--border);padding-top:12px;margin-top:12px}
+.modal{position:fixed;inset:0;background:rgba(15,23,42,.62);display:none;align-items:center;justify-content:center;padding:20px;z-index:100}.modal.show{display:flex}.modal-box{background:#fff;width:min(850px,100%);max-height:92vh;overflow:auto;border-radius:16px;padding:20px}.modal-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:15px}.modal-head h2{margin:0}
+.login{position:fixed;inset:0;background:#0f172ae8;display:flex;align-items:center;justify-content:center;z-index:200}.login-box{width:min(420px,92%);background:#fff;border-radius:16px;padding:25px}.hidden{display:none!important}
+@media(max-width:1000px){.sidebar{width:205px}.content{margin-left:205px}.stats{grid-template-columns:repeat(2,1fr)}.quote-layout{grid-template-columns:1fr}}
+@media(max-width:700px){.sidebar{position:static;width:100%;min-height:auto}.content{margin-left:0}.nav{display:flex;overflow:auto}.nav button{white-space:nowrap;width:auto}.nav .section{display:none}.brand{padding-bottom:12px}.topbar{position:static}.grid-2,.grid-3,.grid-4{grid-template-columns:1fr}.stats{grid-template-columns:1fr 1fr}main{padding:14px}}
 </style>
 </head>
 <body>
-<header><div class="header"><div><div class="brand">⚡ Orçamento Elétrico</div><div class="sub">Calculadora de mão de obra • Tabela 2026</div></div><button class="adminBtn" onclick="toggleAdmin()">⚙️ Administração</button></div></header>
-<main>
-<section id="admin" class="card admin">
-<h2>⚙️ Área administrativa</h2><div style="font-size:12px;color:#6b7280;margin:-8px 0 12px">Banco conectado: Supabase</div>
-<div class="notice">Os preços são carregados do Supabase. A gravação das alterações depende das políticas RLS e do login administrativo, que configuraremos na próxima etapa.</div>
-<div style="margin:12px 0"><input id="adminSearch" class="search" placeholder="Pesquisar serviço para editar..."></div>
-<div id="adminList" class="admin-grid"></div>
-</section>
-
-<div class="grid">
-<div>
-<div class="card">
-<h2>🔎 Escolher serviços</h2>
-<input id="search" class="search" placeholder="Pesquisar serviço: tomada, chuveiro, QDC, iluminação..."><div id="dbStatus" style="font-size:11px;color:#6b7280;margin-top:8px">Conectando ao banco...</div>
-<div id="tags" class="tags"></div>
-<div id="services" class="services"></div>
-</div>
-</div>
-
-<div>
-<div class="card">
-<h2>🧾 Orçamento</h2>
-<div class="row">
-<div class="field"><label>Cliente</label><input id="cliente" placeholder="Nome do cliente"></div>
-<div class="field"><label>Telefone</label><input id="telefone" placeholder="(00) 00000-0000"></div>
-</div>
-<div class="field"><label>Endereço / local</label><input id="endereco" placeholder="Endereço do serviço"></div>
-<div id="quote"></div>
-<div class="summary">
-<div class="sumline"><span>Mão de obra</span><strong id="mao">R$ 0,00</strong></div>
-<div class="sumline"><span>Materiais</span><strong id="mat">R$ 0,00</strong></div>
-<div class="sumline"><span>Deslocamento</span><strong id="desl">R$ 0,00</strong></div>
-<div class="row">
-<div class="field"><label>Materiais (R$)</label><input id="materialInput" type="number" min="0" step=".01" value="0"></div>
-<div class="field"><label>Deslocamento (R$)</label><input id="deslocInput" type="number" min="0" step=".01" value="0"></div>
-</div>
-<div class="row">
-<div class="field"><label>Desconto (R$)</label><input id="desconto" type="number" min="0" step=".01" value="0"></div>
-<div class="field"><label>Acréscimo (R$)</label><input id="acrescimo" type="number" min="0" step=".01" value="0"></div>
-</div>
-<div class="field"><label>Forma de pagamento</label><select id="pagamento"><option>PIX</option><option>Dinheiro</option><option>Cartão de débito</option><option>Cartão de crédito</option><option>Parcelado</option><option>Transferência</option><option>Outro</option></select></div>
-<div class="row">
-<div class="field"><label>Prazo de execução</label><input id="prazo" placeholder="Ex.: 2 dias"></div>
-<div class="field"><label>Garantia</label><input id="garantia" placeholder="Ex.: 90 dias"></div>
-</div>
-<div class="field"><label>Observações</label><textarea id="obs" placeholder="Condições, detalhes do serviço, materiais não inclusos..."></textarea></div>
-<div class="sumline total"><span>TOTAL FINAL</span><span id="total">R$ 0,00</span></div>
-<button class="primary" onclick="printQuote()">🖨️ Gerar / imprimir orçamento</button>
-<button class="secondary" onclick="clearQuote()">🗑️ Limpar orçamento</button>
-</div></div>
-</div>
-</div>
-</main>
-
-<script>
-const SUPABASE_URL = "https://jfwcvqqjtuqjbtapcdet.supabase.co";
-const SUPABASE_KEY = "sb_publishable_gC6HXuFlm59yT60YHFxM8w_CNqzSidO";
-
-const initialServices = [];
-async function loadServicesFromSupabase() {
-  try {
-    const url = SUPABASE_URL + "/rest/v1/servicos?select=id,nome,preco_minimo,preco_medio,preco_maximo,unidade,categoria_id,ativo,categorias(nome)&ativo=eq.true&order=id";
-    const response = await fetch(url, {
-      headers: {
-        "apikey": SUPABASE_KEY,
-        "Authorization": "Bearer " + SUPABASE_KEY
-      }
-    });
-    if (!response.ok) throw new Error("HTTP " + response.status);
-    const rows = await response.json();
-    if (!Array.isArray(rows)) throw new Error("Resposta inválida");
-    services = rows.map(s => ({
-      id: s.id,
-      cat: s.categorias?.nome || "Sem categoria",
-      name: s.nome,
-      min: Number(s.preco_minimo) || 0,
-      avg: Number(s.preco_medio) || 0,
-      max: Number(s.preco_maximo) || 0,
-      unidade: s.unidade || "unidade"
-    }));
-    selectedCat = "Todos";
-    renderTags();
-    renderServices();
-    renderAdmin();
-  } catch (err) {
-    console.error("Erro ao carregar serviços do Supabase:", err);
-    document.getElementById("services").innerHTML =
-      '<div class="empty">Não foi possível carregar os serviços do banco. Verifique a conexão com o Supabase.</div>';
-  }
-}
-
-let services = [];
-let selectedCat="Todos", quote=[];
-
-const money=v=>new Intl.NumberFormat("pt-BR",{style:"currency",currency:"BRL"}).format(Number(v)||0);
-const norm=s=>s.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"");
-
-function renderTags(){
- const cats=["Todos",...new Set(services.map(s=>s.cat))];
- document.getElementById("tags").innerHTML=cats.map(c=>`<button class="tag ${c===selectedCat?'active':''}" onclick="setCat('${c.replaceAll("'","\\'")}')"># ${c}</button>`).join("");
-}
-function setCat(c){selectedCat=c;renderTags();renderServices();}
-function renderServices(){
- const q=norm(document.getElementById("search").value||"");
- const list=services.filter(s=>(selectedCat==="Todos"||s.cat===selectedCat)&&norm(s.name).includes(q));
- document.getElementById("services").innerHTML=list.length?list.map(s=>`<div class="service">
- <div><div class="service-title">${s.name}</div><div class="cat"># ${s.cat}</div>
- <div class="prices">Mín. ${money(s.min)} · Médio ${money(s.avg)} · Máx. ${money(s.max)}</div></div>
- <button class="add" onclick="addService(${s.id})">+ Adicionar</button></div>`).join(""):`<div class="empty">Nenhum serviço encontrado.</div>`;
-}
-function addService(id){
- const s=services.find(x=>x.id===id); if(!s)return;
- quote.push({id:s.id,name:s.name,cat:s.cat,qty:1,price:s.avg,mode:"Médio"});
- renderQuote();
-}
-function renderQuote(){
- document.getElementById("quote").innerHTML=quote.length?quote.map((x,i)=>`<div class="quote-item">
- <div class="qi-top"><div class="qi-name">${x.name}</div><button class="remove" onclick="removeItem(${i})">✕</button></div>
- <div class="qi-sub"># ${x.cat}</div>
- <div style="display:flex;gap:7px;align-items:center;margin-top:8px">
- <label style="font-size:11px">Qtd.</label><input class="qty" type="number" min="1" value="${x.qty}" onchange="changeQty(${i},this.value)">
- <select onchange="changeMode(${i},this.value)" style="padding:6px;border:1px solid var(--border);border-radius:6px">
- ${["Mínimo","Médio","Máximo","Personalizado"].map(m=>`<option ${x.mode===m?'selected':''}>${m}</option>`).join("")}</select>
- ${x.mode==="Personalizado"?`<input class="qty" style="width:100px" type="number" min="0" step=".01" value="${x.price}" onchange="changePrice(${i},this.value)">`:``}
- <strong style="margin-left:auto">${money(x.qty*x.price)}</strong></div></div>`).join(""):`<div class="empty">Adicione serviços ao orçamento.</div>`;
- calc();
-}
-function changeQty(i,v){quote[i].qty=Math.max(1,Number(v)||1);renderQuote()}
-function changeMode(i,m){quote[i].mode=m;const s=services.find(x=>x.id===quote[i].id);quote[i].price=m==="Mínimo"?s.min:m==="Máximo"?s.max:m==="Médio"?s.avg:quote[i].price;renderQuote()}
-function changePrice(i,v){quote[i].price=Math.max(0,Number(v)||0);calc()}
-function removeItem(i){quote.splice(i,1);renderQuote()}
-function calc(){
- const mao=quote.reduce((a,x)=>a+x.qty*x.price,0);
- const mat=Number(document.getElementById("materialInput").value)||0, desl=Number(document.getElementById("deslocInput").value)||0;
- const desc=Number(document.getElementById("desconto").value)||0, acr=Number(document.getElementById("acrescimo").value)||0;
- document.getElementById("mao").textContent=money(mao);document.getElementById("mat").textContent=money(mat);document.getElementById("desl").textContent=money(desl);
- document.getElementById("total").textContent=money(Math.max(0,mao+mat+desl+acr-desc));
-}
-function clearQuote(){quote=[];document.querySelectorAll("#materialInput,#deslocInput,#desconto,#acrescimo").forEach(x=>x.value=0);renderQuote()}
-["search","materialInput","deslocInput","desconto","acrescimo"].forEach(id=>document.getElementById(id).addEventListener("input",()=>id==="search"?renderServices():calc()));
-
-function toggleAdmin(){document.getElementById("admin").classList.toggle("show");renderAdmin()}
-function renderAdmin(){
- const q=norm(document.getElementById("adminSearch").value||"");
- const list=services.filter(s=>norm(s.name).includes(q));
- document.getElementById("adminList").innerHTML=list.length ? list.map(s=>`<div class="admin-item"><div><b>${s.name}</b><div class="cat"># ${s.cat}</div></div>
- <input type="number" value="${s.min}" title="Mínimo" onchange="editPrice(${s.id},'min',this.value)">
- <input type="number" value="${s.avg}" title="Médio" onchange="editPrice(${s.id},'avg',this.value)">
- <input type="number" value="${s.max}" title="Máximo" onchange="editPrice(${s.id},'max',this.value)"></div>`).join("") : `<div class="empty">Nenhum serviço encontrado.</div>`;
-}
-async function editPrice(id,key,v){
- const s=services.find(x=>x.id===id);
- if(!s)return;
- const value=Math.max(0,Number(v)||0);
- const field=key==="min"?"preco_minimo":key==="avg"?"preco_medio":"preco_maximo";
- try{
-   const response=await fetch(SUPABASE_URL+"/rest/v1/servicos?id=eq."+encodeURIComponent(id),{
-     method:"PATCH",
-     headers:{
-       "apikey":SUPABASE_KEY,
-       "Authorization":"Bearer "+SUPABASE_KEY,
-       "Content-Type":"application/json",
-       "Prefer":"return=minimal"
-     },
-     body:JSON.stringify({[field]:value})
-   });
-   if(!response.ok) throw new Error("HTTP "+response.status);
-   s[key]=value;
-   renderServices(); renderAdmin();
- }catch(err){
-   alert("Não foi possível salvar o preço no Supabase. Verifique se você está autenticado como administrador.");
-   console.error(err);
- }
-}
-document.getElementById("adminSearch").addEventListener("input",renderAdmin);
-
-function printQuote(){
- const cliente=document.getElementById("cliente").value||"Não informado";
- const telefone=document.getElementById("telefone").value||"";
- const endereco=document.getElementById("endereco").value||"";
- const mat=Number(document.getElementById("materialInput").value)||0, desl=Number(document.getElementById("deslocInput").value)||0;
- const desc=Number(document.getElementById("desconto").value)||0, acr=Number(document.getElementById("acrescimo").value)||0;
- const mao=quote.reduce((a,x)=>a+x.qty*x.price,0), total=Math.max(0,mao+mat+desl+acr-desc);
- const rows=quote.map(x=>`<tr><td>${x.name}</td><td>${x.qty}</td><td>${money(x.price)}</td><td>${money(x.qty*x.price)}</td></tr>`).join("");
- const win=window.open("","_blank");
- win.document.write(`<html><head><title>Orçamento - ${cliente}</title><style>body{font-family:Arial;padding:35px;color:#18212b}h1{font-size:24px}table{width:100%;border-collapse:collapse;margin-top:20px}th,td{padding:9px;border-bottom:1px solid #ddd;text-align:left}th{background:#f1f4f8}.total{font-size:22px;font-weight:bold;text-align:right;margin-top:20px}.box{margin:15px 0;padding:12px;background:#f6f7f9;border-radius:8px}@media print{button{display:none}}</style></head><body>
-<h1>⚡ ORÇAMENTO DE SERVIÇOS ELÉTRICOS</h1><div class="box"><b>Cliente:</b> ${cliente}<br><b>Telefone:</b> ${telefone}<br><b>Endereço:</b> ${endereco}<br><b>Data:</b> ${new Date().toLocaleDateString("pt-BR")}</div>
-<table><thead><tr><th>Serviço</th><th>Qtd.</th><th>Unitário</th><th>Total</th></tr></thead><tbody>${rows}</tbody></table>
-<div class="box"><b>Mão de obra:</b> ${money(mao)}<br><b>Materiais:</b> ${money(mat)}<br><b>Deslocamento:</b> ${money(desl)}<br><b>Desconto:</b> ${money(desc)}<br><b>Acréscimo:</b> ${money(acr)}</div>
-<div class="total">TOTAL FINAL: ${money(total)}</div>
-<div class="box"><b>Pagamento:</b> ${document.getElementById("pagamento").value}<br><b>Prazo:</b> ${document.getElementById("prazo").value||"Não informado"}<br><b>Garantia:</b> ${document.getElementById("garantia").value||"Não informado"}<br><b>Observações:</b><br>${(document.getElementById("obs").value||"").replaceAll("\\n","<br>")}</div>
-<p style="font-size:11px;color:#666">Valores de mão de obra baseados na tabela de referência fornecida. Materiais não estão incluídos nos valores dos serviços.</p>
-<script>window.onload=()=>window.print()<\/script></body></html>`);
- win.document.close();
-}
-renderQuote(); loadServicesFromSupabase().then(()=>{document.getElementById("dbStatus").textContent="✓ Serviços carregados do Supabase";document.getElementById("dbStatus").style.color="#16803a";}).catch(()=>{});
-</script>
-
-<style>
-#authOverlay{position:fixed;inset:0;background:rgba(15,23,42,.72);display:none;align-items:center;justify-content:center;z-index:10000;padding:20px}
-.auth-card{width:min(430px,100%);background:#fff;border-radius:18px;padding:26px;box-shadow:0 25px 80px rgba(0,0,0,.3)}
-.auth-card h2{margin:0 0 8px}.auth-card p{color:#64748b;font-size:14px}
-.auth-card input,.admin-form input,.admin-form select,.admin-form textarea{width:100%;box-sizing:border-box;padding:10px;border:1px solid #cbd5e1;border-radius:9px;margin:5px 0 10px}
-.auth-card button,.admin-toolbar button,.admin-actions button{border:0;border-radius:9px;padding:10px 14px;cursor:pointer}
-.auth-primary{width:100%;background:#111827;color:#fff;margin-top:5px}
-.auth-error{color:#b91c1c;font-size:13px;min-height:18px;margin-top:8px}
-#adminPanel{display:none;position:fixed;inset:0;background:#f1f5f9;z-index:9000;overflow:auto}
-.admin-shell{display:flex;min-height:100vh}
-.admin-side{width:235px;background:#0f172a;color:#fff;padding:20px;box-sizing:border-box}
-.admin-side h2{font-size:19px;margin:0 0 20px}
-.admin-nav button{display:block;width:100%;text-align:left;background:transparent;color:#cbd5e1;border:0;padding:11px;border-radius:9px;margin:3px 0;cursor:pointer}
-.admin-nav button.active,.admin-nav button:hover{background:#1e293b;color:#fff}
-.admin-main{flex:1;padding:24px;min-width:0}
-.admin-top{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:20px}
-.admin-top h1{margin:0;font-size:25px}
-.admin-toolbar{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:15px}
-.admin-toolbar button{background:#e2e8f0}
-.admin-toolbar .danger{background:#fee2e2;color:#991b1b}
-.admin-view{display:none}.admin-view.active{display:block}
-.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:14px}
-.stat{background:#fff;border-radius:14px;padding:18px;box-shadow:0 1px 4px rgba(15,23,42,.08)}
-.stat small{color:#64748b}.stat strong{display:block;font-size:27px;margin-top:7px}
-.admin-card{background:#fff;border-radius:14px;padding:18px;margin-bottom:16px;box-shadow:0 1px 4px rgba(15,23,42,.08)}
-.admin-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px}
-.admin-form label{font-size:12px;color:#475569;font-weight:600}
-.admin-form textarea{min-height:80px;resize:vertical}
-.admin-table-wrap{overflow:auto}
-.admin-table{width:100%;border-collapse:collapse;min-width:720px}
-.admin-table th,.admin-table td{padding:9px;border-bottom:1px solid #e5e7eb;text-align:left;font-size:13px;vertical-align:top}
-.admin-table th{background:#f8fafc}
-.admin-table input,.admin-table select{padding:7px;border:1px solid #cbd5e1;border-radius:7px}
-.admin-actions{display:flex;gap:6px;flex-wrap:wrap}.admin-actions button{background:#e2e8f0;padding:7px 9px}
-.badge{display:inline-block;padding:4px 8px;border-radius:999px;background:#dcfce7;color:#166534;font-size:11px}
-.badge.off{background:#e2e8f0;color:#475569}
-.admin-msg{font-size:13px;margin:8px 0;color:#166534}
-@media(max-width:800px){.admin-side{width:190px}.admin-main{padding:15px}}
-@media(max-width:620px){.admin-shell{display:block}.admin-side{width:100%;position:sticky;top:0;z-index:2}.admin-nav{display:flex;overflow:auto;gap:4px}.admin-nav button{white-space:nowrap;width:auto}}
-</style>
-
-<button onclick="openAuth()" style="position:fixed;right:16px;top:16px;z-index:5000;border:0;border-radius:10px;padding:9px 12px;background:#111827;color:#fff;cursor:pointer">⚙️ Admin</button>
-
-<div id="authOverlay">
-  <div class="auth-card">
-    <h2>🔐 Área administrativa</h2>
-    <p>Use o usuário criado em Supabase → Authentication → Users.</p>
-    <input id="authEmail" type="email" placeholder="E-mail">
-    <input id="authPassword" type="password" placeholder="Senha">
-    <button class="auth-primary" onclick="adminLogin()">Entrar</button>
-    <div id="authError" class="auth-error"></div>
-    <button style="background:none;color:#475569" onclick="closeAuth()">Cancelar</button>
+<div id="login" class="login">
+  <div class="login-box">
+    <h2>🔐 Administração</h2>
+    <p class="muted">Entre com seu usuário do Supabase.</p>
+    <div class="field"><label>E-mail</label><input id="loginEmail" type="email"></div>
+    <div class="field"><label>Senha</label><input id="loginPassword" type="password"></div>
+    <button class="btn primary" style="width:100%" onclick="login()">Entrar</button>
+    <p id="loginError" class="muted"></p>
   </div>
 </div>
 
-<div id="adminPanel">
-<div class="admin-shell">
-<aside class="admin-side">
-  <h2>⚡ Orçamento</h2>
-  <div class="admin-nav">
-    <button data-view="dashboard" class="active" onclick="showAdminView('dashboard')">📊 Dashboard</button>
-    <button data-view="clientes" onclick="showAdminView('clientes')">👥 Clientes</button>
-    <button data-view="orcamentos" onclick="showAdminView('orcamentos')">🧾 Orçamentos</button>
-    <button data-view="servicos" onclick="showAdminView('servicos')">💰 Serviços</button>
-    <button data-view="categorias" onclick="showAdminView('categorias')">🏷️ Categorias</button>
-    <button data-view="materiais" onclick="showAdminView('materiais')">📦 Materiais</button>
-    <button data-view="config" onclick="showAdminView('config')">⚙️ Configurações</button>
+<div class="app hidden" id="app">
+<aside class="sidebar">
+  <div class="brand">⚡ Orçamento Elétrico<small>Gestão de orçamentos</small></div>
+  <div class="nav">
+    <div class="section">Principal</div>
+    <button class="active" data-view="dashboard" onclick="go('dashboard')">📊 Dashboard</button>
+    <button data-view="novo" onclick="go('novo')">➕ Novo orçamento</button>
+    <div class="section">Cadastros</div>
+    <button data-view="clientes" onclick="go('clientes')">👥 Clientes</button>
+    <button data-view="orcamentos" onclick="go('orcamentos')">🧾 Orçamentos</button>
+    <button data-view="servicos" onclick="go('servicos')">💰 Serviços</button>
+    <button data-view="materiais" onclick="go('materiais')">📦 Materiais</button>
+    <button data-view="categorias" onclick="go('categorias')">🏷️ Categorias</button>
+    <div class="section">Sistema</div>
+    <button data-view="config" onclick="go('config')">⚙️ Configurações</button>
   </div>
 </aside>
-<main class="admin-main">
-  <div class="admin-top">
-    <h1 id="adminTitle">Dashboard</h1>
-    <div class="admin-actions">
-      <button onclick="closeAdmin()">← Orçamento</button>
-      <button onclick="adminLogout()">Sair</button>
+
+<div class="content">
+<header class="topbar"><h1 id="pageTitle">Dashboard</h1><div class="top-actions"><button class="btn primary" onclick="go('novo')">＋ Novo orçamento</button><button class="btn" onclick="logout()">Sair</button></div></header>
+<main>
+
+<section id="view-dashboard" class="view active">
+  <div class="stats">
+    <div class="stat"><small>Total de orçamentos</small><strong id="statQuotes">0</strong></div>
+    <div class="stat"><small>Orçamentos aprovados</small><strong id="statApproved">0</strong></div>
+    <div class="stat"><small>Valores totais</small><strong id="statValue">R$ 0,00</strong></div>
+    <div class="stat"><small>Clientes</small><strong id="statClients">0</strong></div>
+  </div>
+  <div class="card" style="margin-top:16px">
+    <div class="title-row"><h2>Orçamentos recentes</h2><button class="btn small" onclick="go('orcamentos')">Ver todos</button></div>
+    <div class="table-wrap"><table class="table"><thead><tr><th>Nº</th><th>Cliente</th><th>Status</th><th>Total</th><th>Data</th><th></th></tr></thead><tbody id="recentBody"></tbody></table></div>
+  </div>
+</section>
+
+<section id="view-novo" class="view">
+  <div class="title-row"><h2 id="quoteTitle">Novo orçamento</h2><div class="actions"><button class="btn" onclick="newQuote()">Limpar</button><button class="btn primary" onclick="saveQuote()">💾 Salvar orçamento</button></div></div>
+  <div class="quote-layout">
+    <div>
+      <div class="card">
+        <div class="title-row"><h2>Cliente</h2><button class="btn small" onclick="go('clientes')">Cadastrar cliente</button></div>
+        <div class="grid grid-2">
+          <div class="field"><label>Cliente</label><select id="qCliente"></select></div>
+          <div class="field"><label>Status</label><select id="qStatus"><option>Rascunho</option><option>Enviado</option><option>Aguardando resposta</option><option>Aprovado</option><option>Rejeitado</option><option>Cancelado</option></select></div>
+        </div>
+        <div class="grid grid-2">
+          <div class="field"><label>Telefone</label><input id="qTelefone" readonly></div>
+          <div class="field"><label>Endereço</label><input id="qEndereco" readonly></div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="title-row"><h2>Serviços</h2></div>
+        <div class="toolbar"><input id="servicePickSearch" class="grow" placeholder="Pesquisar serviço..." oninput="renderQuoteServices()"><select id="servicePickCat" style="max-width:220px" onchange="renderQuoteServices()"></select></div>
+        <div id="quoteServices" class="service-list"></div>
+      </div>
+      <div class="card">
+        <div class="title-row"><h2>Itens do orçamento</h2></div>
+        <div id="quoteItems" class="quote-items"></div>
+      </div>
+    </div>
+    <div>
+      <div class="card">
+        <h2>Valores</h2>
+        <div class="grid grid-2">
+          <div class="field"><label>Materiais</label><input id="qMateriais" type="number" step=".01" value="0" oninput="calcQuote()"></div>
+          <div class="field"><label>Deslocamento</label><input id="qDeslocamento" type="number" step=".01" value="0" oninput="calcQuote()"></div>
+          <div class="field"><label>Desconto</label><input id="qDesconto" type="number" step=".01" value="0" oninput="calcQuote()"></div>
+          <div class="field"><label>Acréscimo</label><input id="qAcrescimo" type="number" step=".01" value="0" oninput="calcQuote()"></div>
+        </div>
+        <div class="sumline"><span>Mão de obra</span><strong id="qMao">R$ 0,00</strong></div>
+        <div class="sumline"><span>Materiais</span><strong id="qMatTotal">R$ 0,00</strong></div>
+        <div class="sumline"><span>Deslocamento</span><strong id="qDeslTotal">R$ 0,00</strong></div>
+        <div class="sumline"><span>Desconto</span><strong id="qDescTotal">R$ 0,00</strong></div>
+        <div class="sumline"><span>Acréscimo</span><strong id="qAcrTotal">R$ 0,00</strong></div>
+        <div class="quote-total"><span>TOTAL</span><span id="qTotal">R$ 0,00</span></div>
+      </div>
+      <div class="card">
+        <h2>Condições</h2>
+        <div class="field"><label>Forma de pagamento</label><select id="qPagamento"><option>PIX</option><option>Dinheiro</option><option>Cartão de débito</option><option>Cartão de crédito</option><option>Parcelado</option><option>Transferência</option><option>Outro</option></select></div>
+        <div class="grid grid-2"><div class="field"><label>Prazo</label><input id="qPrazo" placeholder="Ex.: 2 dias"></div><div class="field"><label>Garantia</label><input id="qGarantia" placeholder="Ex.: 90 dias"></div></div>
+        <div class="field"><label>Observações</label><textarea id="qObs" rows="5"></textarea></div>
+        <div class="actions"><button class="btn primary" style="flex:1" onclick="saveQuote()">💾 Salvar</button><button class="btn" onclick="printCurrentQuote()">🖨️ Imprimir</button></div>
+      </div>
     </div>
   </div>
+</section>
 
-  <section id="view-dashboard" class="admin-view active">
-    <div class="stats">
-      <div class="stat"><small>Serviços ativos</small><strong id="statServices">-</strong></div>
-      <div class="stat"><small>Categorias ativas</small><strong id="statCategories">-</strong></div>
-      <div class="stat"><small>Clientes</small><strong id="statClients">-</strong></div>
-      <div class="stat"><small>Orçamentos</small><strong id="statQuotes">-</strong></div>
-      <div class="stat"><small>Total orçado</small><strong id="statTotal">R$ 0,00</strong></div>
-    </div>
-    <div class="admin-card" style="margin-top:16px">
-      <h3>Orçamentos recentes</h3>
-      <div class="admin-table-wrap"><table class="admin-table"><thead><tr><th>Nº</th><th>Cliente</th><th>Status</th><th>Total</th><th>Data</th></tr></thead><tbody id="recentQuotes"></tbody></table></div>
-    </div>
-  </section>
+<section id="view-clientes" class="view">
+  <div class="toolbar"><button class="btn primary" onclick="openClient()">＋ Cadastrar cliente</button><input id="clientSearch" class="grow" placeholder="Pesquisar cliente..." oninput="renderClients()"></div>
+  <div class="card"><div class="table-wrap"><table class="table"><thead><tr><th>Nome</th><th>Telefone</th><th>WhatsApp</th><th>E-mail</th><th>Cidade</th><th>Ações</th></tr></thead><tbody id="clientsBody"></tbody></table></div></div>
+</section>
 
-  <section id="view-clientes" class="admin-view">
-    <div class="admin-toolbar"><button onclick="newClient()">＋ Novo cliente</button><button onclick="loadClients()">↻ Atualizar</button></div>
-    <div class="admin-card admin-form" id="clientForm" style="display:none">
-      <h3 id="clientFormTitle">Novo cliente</h3>
-      <input type="hidden" id="clientId">
-      <div class="admin-grid">
-        <div><label>Nome</label><input id="clientNome"></div>
-        <div><label>Telefone / WhatsApp</label><input id="clientTelefone"></div>
-        <div><label>E-mail</label><input id="clientEmail"></div>
-        <div><label>CEP</label><input id="clientCep"></div>
-        <div><label>Rua</label><input id="clientRua"></div>
-        <div><label>Número</label><input id="clientNumero"></div>
-        <div><label>Complemento</label><input id="clientComplemento"></div>
-        <div><label>Bairro</label><input id="clientBairro"></div>
-        <div><label>Cidade</label><input id="clientCidade"></div>
-        <div><label>Estado</label><input id="clientEstado"></div>
-      </div>
-      <label>Observações</label><textarea id="clientObs"></textarea>
-      <div class="admin-actions"><button onclick="saveClient()">Salvar</button><button onclick="cancelClient()">Cancelar</button></div>
-      <div id="clientMsg" class="admin-msg"></div>
-    </div>
-    <div class="admin-card"><input id="clientSearch" placeholder="🔎 Pesquisar cliente..." oninput="renderClients()"><div class="admin-table-wrap"><table class="admin-table"><thead><tr><th>Nome</th><th>Telefone</th><th>E-mail</th><th>Cidade</th><th>Ações</th></tr></thead><tbody id="clientsBody"></tbody></table></div></div>
-  </section>
+<section id="view-orcamentos" class="view">
+  <div class="toolbar"><button class="btn primary" onclick="newQuote();go('novo')">＋ Novo orçamento</button><input id="quoteSearch" class="grow" placeholder="Pesquisar nº, cliente ou status..." oninput="renderQuotes()"><select id="quoteFilterStatus" onchange="renderQuotes()"><option value="">Todos os status</option><option>Rascunho</option><option>Enviado</option><option>Aguardando resposta</option><option>Aprovado</option><option>Rejeitado</option><option>Cancelado</option></select><select id="quoteFilterClient" onchange="renderQuotes()"><option value="">Todos os clientes</option></select></div>
+  <div class="card"><div class="table-wrap"><table class="table"><thead><tr><th>Nº</th><th>Cliente</th><th>Status</th><th>Mão de obra</th><th>Materiais</th><th>Total</th><th>Data</th><th>Ações</th></tr></thead><tbody id="quotesBody"></tbody></table></div></div>
+</section>
 
-  <section id="view-orcamentos" class="admin-view">
-    <div class="admin-toolbar"><button onclick="showAdminView('dashboard')">← Dashboard</button><button onclick="loadQuotes()">↻ Atualizar</button></div>
-    <div class="admin-card"><input id="quoteSearch" placeholder="🔎 Pesquisar nº, cliente ou status..." oninput="renderQuotes()"><div class="admin-table-wrap"><table class="admin-table"><thead><tr><th>Nº</th><th>Cliente</th><th>Status</th><th>Mão de obra</th><th>Materiais</th><th>Total</th><th>Data</th></tr></thead><tbody id="quotesBody"></tbody></table></div></div>
-  </section>
+<section id="view-servicos" class="view">
+  <div class="toolbar"><button class="btn primary" onclick="openService()">＋ Adicionar serviço</button><input id="serviceSearch" class="grow" placeholder="Pesquisar serviço..." oninput="renderAdminServices()"><select id="serviceFilterCat" onchange="renderAdminServices()"></select></div>
+  <div class="card"><div class="table-wrap"><table class="table"><thead><tr><th>Serviço</th><th>Categoria</th><th>Mínimo</th><th>Médio</th><th>Máximo</th><th>Unidade</th><th>Status</th><th>Ações</th></tr></thead><tbody id="servicesBody"></tbody></table></div></div>
+</section>
 
-  <section id="view-servicos" class="admin-view">
-    <div class="admin-toolbar"><button onclick="loadAdminServices()">↻ Atualizar</button></div>
-    <div class="admin-card"><input id="serviceSearch" placeholder="🔎 Pesquisar serviço..." oninput="renderAdminServices()"><div class="admin-table-wrap"><table class="admin-table"><thead><tr><th>Serviço</th><th>Categoria</th><th>Mínimo</th><th>Médio</th><th>Máximo</th><th>Unidade</th><th>Status</th></tr></thead><tbody id="servicesBody"></tbody></table></div></div>
-  </section>
+<section id="view-materiais" class="view">
+  <div class="toolbar"><button class="btn primary" onclick="openMaterial()">＋ Adicionar material</button><input id="materialSearch" class="grow" placeholder="Pesquisar material..." oninput="renderMaterials()"></div>
+  <div class="card"><div class="table-wrap"><table class="table"><thead><tr><th>Nome</th><th>Unidade</th><th>Custo</th><th>Preço</th><th>Quantidade</th><th>Status</th><th>Ações</th></tr></thead><tbody id="materialsBody"></tbody></table></div></div>
+</section>
 
-  <section id="view-categorias" class="admin-view">
-    <div class="admin-toolbar"><button onclick="newCategory()">＋ Nova categoria</button><button onclick="loadCategories()">↻ Atualizar</button></div>
-    <div class="admin-card admin-form" id="categoryForm" style="display:none">
-      <h3>Categoria</h3><input type="hidden" id="catId">
-      <div class="admin-grid"><div><label>Nome</label><input id="catNome"></div><div><label>Ícone</label><input id="catIcone" placeholder="💡"></div><div><label>Cor</label><input id="catCor" placeholder="#2563eb"></div><div><label>Ordem</label><input id="catOrdem" type="number" value="0"></div></div>
-      <label><input id="catAtivo" type="checkbox" checked> Ativa</label>
-      <div class="admin-actions"><button onclick="saveCategory()">Salvar</button><button onclick="cancelCategory()">Cancelar</button></div><div id="catMsg" class="admin-msg"></div>
-    </div>
-    <div class="admin-card"><div class="admin-table-wrap"><table class="admin-table"><thead><tr><th>Nome</th><th>Ícone</th><th>Cor</th><th>Ordem</th><th>Status</th><th>Ações</th></tr></thead><tbody id="categoriesBody"></tbody></table></div></div>
-  </section>
+<section id="view-categorias" class="view">
+  <div class="toolbar"><button class="btn primary" onclick="openCategory()">＋ Criar categoria</button></div>
+  <div class="card"><div class="table-wrap"><table class="table"><thead><tr><th>Nome</th><th>Ícone</th><th>Cor</th><th>Ordem</th><th>Status</th><th>Ações</th></tr></thead><tbody id="categoriesBody"></tbody></table></div></div>
+</section>
 
-  <section id="view-materiais" class="admin-view">
-    <div class="admin-toolbar"><button onclick="newMaterial()">＋ Novo material</button><button onclick="loadMaterials()">↻ Atualizar</button></div>
-    <div class="admin-card admin-form" id="materialForm" style="display:none">
-      <h3>Material</h3><input type="hidden" id="matId">
-      <div class="admin-grid"><div><label>Nome</label><input id="matNome"></div><div><label>Unidade</label><input id="matUnidade" placeholder="unidade"></div><div><label>Custo</label><input id="matCusto" type="number" step="0.01"></div><div><label>Preço de venda</label><input id="matVenda" type="number" step="0.01"></div><div><label>Estoque</label><input id="matEstoque" type="number" step="0.01"></div></div>
-      <label>Descrição</label><textarea id="matDescricao"></textarea><label><input id="matAtivo" type="checkbox" checked> Ativo</label>
-      <div class="admin-actions"><button onclick="saveMaterial()">Salvar</button><button onclick="cancelMaterial()">Cancelar</button></div><div id="matMsg" class="admin-msg"></div>
-    </div>
-    <div class="admin-card"><input id="materialSearch" placeholder="🔎 Pesquisar material..." oninput="renderMaterials()"><div class="admin-table-wrap"><table class="admin-table"><thead><tr><th>Nome</th><th>Unidade</th><th>Custo</th><th>Venda</th><th>Estoque</th><th>Status</th><th>Ações</th></tr></thead><tbody id="materialsBody"></tbody></table></div></div>
-  </section>
+<section id="view-config" class="view">
+  <div class="card"><h2>Configurações</h2><p class="muted">As configurações são carregadas da tabela <b>configuracoes</b>.</p><div id="configList"></div><button class="btn primary" onclick="saveConfigs()">Salvar configurações</button></div>
+</section>
 
-  <section id="view-config" class="admin-view">
-    <div class="admin-card">
-      <h3>Configurações</h3>
-      <p style="color:#64748b;font-size:13px">Edite os valores cadastrados na tabela <code>configuracoes</code>. As chaves existentes serão carregadas automaticamente.</p>
-      <div id="configList" class="admin-form"></div>
-      <div class="admin-actions"><button onclick="saveConfigs()">Salvar configurações</button></div><div id="configMsg" class="admin-msg"></div>
-    </div>
-  </section>
-</main>
-</div>
-</div>
+</main></div></div>
+
+<div id="modal" class="modal"><div class="modal-box"><div class="modal-head"><h2 id="modalTitle"></h2><button class="btn" onclick="closeModal()">Fechar</button></div><div id="modalBody"></div></div></div>
 
 <script>
-const SUPABASE_AUTH_URL = SUPABASE_URL + "/auth/v1";
-let adminServices = [], adminClients = [], adminQuotes = [], adminCategories = [], adminMaterials = [], adminConfigs = [];
+const SUPABASE_URL="https://jfwcvqqjtuqjbtapcdet.supabase.co";
+const SUPABASE_KEY="sb_publishable_gC6HXuFlm59yT60YHFxM8w_CNqzSidO";
 
-function esc(v){return String(v ?? "").replace(/[&<>"\']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","\'":"&#39;"}[c]));}
-function adminMoney(v){return Number(v||0).toLocaleString("pt-BR",{style:"currency",currency:"BRL"});}
-function token(){return localStorage.getItem("sb_access_token")||"";}
-function headers(auth=true){const h={"apikey":SUPABASE_KEY,"Content-Type":"application/json"};if(auth)h.Authorization="Bearer "+token();return h;}
-async function api(table,opts={}){
-  const r=await fetch(SUPABASE_URL+"/rest/v1/"+table,{
-    method:opts.method||"GET",
-    headers:{...headers(true),...(opts.headers||{}),...(opts.method&&opts.method!=="GET"?{"Prefer":"return=representation"}:{})},
-    body:opts.body?JSON.stringify(opts.body):undefined
-  });
-  const text=await r.text(); let data=null; try{data=text?JSON.parse(text):null}catch(_){}
-  if(!r.ok) throw new Error((data&&data.message)||("Supabase "+r.status+": "+text));
-  return data;
+let services=[],clients=[],quotes=[],materials=[],categories=[],configs=[];
+let quoteItems=[],editingQuoteId=null;
+
+const money=v=>Number(v||0).toLocaleString("pt-BR",{style:"currency",currency:"BRL"});
+const esc=v=>String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const token=()=>localStorage.getItem("sb_access_token")||"";
+const headers=(auth=true)=>{const h={"apikey":SUPABASE_KEY,"Content-Type":"application/json"};if(auth)h.Authorization="Bearer "+token();return h};
+
+async function api(path,opts={}){
+  const r=await fetch(SUPABASE_URL+"/rest/v1/"+path,{method:opts.method||"GET",headers:{...headers(true),...(opts.headers||{}),...(opts.method&&opts.method!=="GET"?{"Prefer":"return=representation"}:{})},body:opts.body?JSON.stringify(opts.body):undefined});
+  const text=await r.text();let data=null;try{data=text?JSON.parse(text):null}catch(_){}
+  if(!r.ok)throw new Error((data&&data.message)||("Supabase "+r.status+": "+text));return data;
 }
-function openAuth(){document.getElementById("authOverlay").style.display="flex";document.getElementById("authEmail").focus();}
-function closeAuth(){document.getElementById("authOverlay").style.display="none";document.getElementById("authError").textContent="";}
-async function adminLogin(){
-  const email=document.getElementById("authEmail").value.trim(), password=document.getElementById("authPassword").value, err=document.getElementById("authError");
-  err.textContent=""; if(!email||!password){err.textContent="Informe e-mail e senha.";return;}
+async function login(){
+  const email=loginEmail.value.trim(),password=loginPassword.value;
   try{
-    const r=await fetch(SUPABASE_AUTH_URL+"/token?grant_type=password",{method:"POST",headers:headers(false),body:JSON.stringify({email,password})});
-    const d=await r.json(); if(!r.ok)throw new Error(d.error_description||d.msg||"Falha no login");
-    localStorage.setItem("sb_access_token",d.access_token);localStorage.setItem("sb_refresh_token",d.refresh_token||"");
-    closeAuth();document.getElementById("adminPanel").style.display="block";await loadDashboard();
-  }catch(e){err.textContent=e.message;}
+    const r=await fetch(SUPABASE_URL+"/auth/v1/token?grant_type=password",{method:"POST",headers:headers(false),body:JSON.stringify({email,password})});
+    const d=await r.json();if(!r.ok)throw new Error(d.error_description||d.msg||"Falha no login");
+    localStorage.setItem("sb_access_token",d.access_token);localStorage.setItem("sb_refresh_token",d.refresh_token||"");startApp();
+  }catch(e){loginError.textContent=e.message}
 }
-function adminLogout(){localStorage.removeItem("sb_access_token");localStorage.removeItem("sb_refresh_token");document.getElementById("adminPanel").style.display="none";}
-function closeAdmin(){document.getElementById("adminPanel").style.display="none";}
-function showAdminView(view){
-  document.querySelectorAll(".admin-view").forEach(x=>x.classList.remove("active"));
+function logout(){localStorage.removeItem("sb_access_token");localStorage.removeItem("sb_refresh_token");location.reload()}
+function startApp(){login.classList.add("hidden");app.classList.remove("hidden");loadAll().catch(e=>console.error(e))}
+function go(view){
+  document.querySelectorAll(".view").forEach(x=>x.classList.remove("active"));
   document.getElementById("view-"+view).classList.add("active");
-  document.querySelectorAll(".admin-nav button").forEach(x=>x.classList.toggle("active",x.dataset.view===view));
-  const titles={dashboard:"Dashboard",clientes:"Clientes",orcamentos:"Orçamentos",servicos:"Serviços",categorias:"Categorias",materiais:"Materiais",config:"Configurações"};
-  document.getElementById("adminTitle").textContent=titles[view]||view;
-  const fn={dashboard:loadDashboard,clientes:loadClients,orcamentos:loadQuotes,servicos:loadAdminServices,categorias:loadCategories,materiais:loadMaterials,config:loadConfigs}[view]; if(fn)fn();
+  document.querySelectorAll(".nav button").forEach(x=>x.classList.toggle("active",x.dataset.view===view));
+  pageTitle.textContent={dashboard:"Dashboard",novo:"Novo orçamento",clientes:"Clientes",orcamentos:"Orçamentos",servicos:"Serviços",materiais:"Materiais",categorias:"Categorias",config:"Configurações"}[view];
+  if(view==="dashboard")loadDashboard();if(view==="clientes")loadClients();if(view==="orcamentos")loadQuotes();if(view==="servicos")loadServices();if(view==="materiais")loadMaterials();if(view==="categorias")loadCategories();if(view==="config")loadConfigs();
 }
+
+async function loadAll(){await Promise.all([loadClients(),loadServices(),loadMaterials(),loadCategories(),loadQuotes()]);await loadDashboard();populateClientSelects();populateCategorySelects();renderQuoteServices();newQuote()}
 async function loadDashboard(){
   try{
-    const [s,c,cl,o]=await Promise.all([
-      api("servicos?select=id&ativo=eq.true"),
-      api("categorias?select=id&ativo=eq.true"),
-      api("clientes?select=id"),
-      api("orcamentos?select=id,numero,cliente_id,status,total,created_at&order=created_at.desc&limit=10")
+    const [allQ,approved,allClients]=await Promise.all([
+      api("orcamentos?select=id,total,created_at,numero,cliente_id,status&order=created_at.desc"),
+      api("orcamentos?select=id&status=eq.Aprovado"),
+      api("clientes?select=id")
     ]);
-    adminServices=s||[];document.getElementById("statServices").textContent=(s||[]).length;
-    document.getElementById("statCategories").textContent=(c||[]).length;
-    document.getElementById("statClients").textContent=(cl||[]).length;
-    document.getElementById("statQuotes").textContent=(o||[]).length;
-    const total=(o||[]).reduce((a,x)=>a+Number(x.total||0),0);document.getElementById("statTotal").textContent=adminMoney(total);
-    adminQuotes=o||[]; renderRecentQuotes();
-  }catch(e){document.getElementById("recentQuotes").innerHTML='<tr><td colspan="5">'+esc(e.message)+'</td></tr>';}
+    quotes=allQ||[];statQuotes.textContent=quotes.length;statApproved.textContent=(approved||[]).length;statValue.textContent=money(quotes.reduce((a,q)=>a+Number(q.total||0),0));statClients.textContent=(allClients||[]).length;renderRecent();
+  }catch(e){recentBody.innerHTML='<tr><td colspan="6">'+esc(e.message)+'</td></tr>'}
 }
-function renderRecentQuotes(){document.getElementById("recentQuotes").innerHTML=adminQuotes.map(q=>`<tr><td>${esc(q.numero||q.id)}</td><td>${esc(q.cliente_id||"")}</td><td>${esc(q.status||"")}</td><td>${adminMoney(q.total)}</td><td>${q.created_at?new Date(q.created_at).toLocaleDateString("pt-BR"):""}</td></tr>`).join("")||'<tr><td colspan="5">Nenhum orçamento.</td></tr>';}
-async function loadClients(){try{adminClients=await api("clientes?select=*&order=nome")||[];renderClients();}catch(e){document.getElementById("clientsBody").innerHTML='<tr><td colspan="5">'+esc(e.message)+'</td></tr>';}}
-function renderClients(){const q=(document.getElementById("clientSearch").value||"").toLowerCase();const rows=adminClients.filter(x=>JSON.stringify(x).toLowerCase().includes(q));document.getElementById("clientsBody").innerHTML=rows.map(c=>`<tr><td>${esc(c.nome)}</td><td>${esc(c.telefone)}</td><td>${esc(c.email)}</td><td>${esc(c.cidade)}</td><td class="admin-actions"><button onclick='editClient(${JSON.stringify(c)})'>Editar</button><button onclick="deleteClient(${c.id})">Excluir</button></td></tr>`).join("")||'<tr><td colspan="5">Nenhum cliente.</td></tr>';}
-function newClient(){document.getElementById("clientForm").style.display="block";["clientId","clientNome","clientTelefone","clientEmail","clientCep","clientRua","clientNumero","clientComplemento","clientBairro","clientCidade","clientEstado","clientObs"].forEach(id=>document.getElementById(id).value="");}
-function editClient(c){newClient();document.getElementById("clientId").value=c.id;document.getElementById("clientNome").value=c.nome||"";document.getElementById("clientTelefone").value=c.telefone||"";document.getElementById("clientEmail").value=c.email||"";document.getElementById("clientCep").value=c.cep||"";document.getElementById("clientRua").value=c.rua||c.endereco||"";document.getElementById("clientNumero").value=c.numero||"";document.getElementById("clientComplemento").value=c.complemento||"";document.getElementById("clientBairro").value=c.bairro||"";document.getElementById("clientCidade").value=c.cidade||"";document.getElementById("clientEstado").value=c.estado||"";document.getElementById("clientObs").value=c.observacoes||"";}
-function cancelClient(){document.getElementById("clientForm").style.display="none";}
-async function saveClient(){const id=document.getElementById("clientId").value;const body={nome:document.getElementById("clientNome").value.trim(),telefone:document.getElementById("clientTelefone").value.trim(),email:document.getElementById("clientEmail").value.trim(),cep:document.getElementById("clientCep").value.trim(),rua:document.getElementById("clientRua").value.trim(),numero:document.getElementById("clientNumero").value.trim(),complemento:document.getElementById("clientComplemento").value.trim(),bairro:document.getElementById("clientBairro").value.trim(),cidade:document.getElementById("clientCidade").value.trim(),estado:document.getElementById("clientEstado").value.trim(),observacoes:document.getElementById("clientObs").value.trim()};try{if(id)await api("clientes?id=eq."+id,{method:"PATCH",body});else await api("clientes",{method:"POST",body});cancelClient();await loadClients();}catch(e){document.getElementById("clientMsg").textContent=e.message;}}
-async function deleteClient(id){if(!confirm("Excluir este cliente?"))return;try{await api("clientes?id=eq."+id,{method:"DELETE"});await loadClients();}catch(e){alert(e.message);}}
-async function loadQuotes(){try{adminQuotes=await api("orcamentos?select=*&order=created_at.desc")||[];renderQuotes();}catch(e){document.getElementById("quotesBody").innerHTML='<tr><td colspan="7">'+esc(e.message)+'</td></tr>';}}
-function renderQuotes(){const q=(document.getElementById("quoteSearch").value||"").toLowerCase();const rows=adminQuotes.filter(x=>JSON.stringify(x).toLowerCase().includes(q));document.getElementById("quotesBody").innerHTML=rows.map(x=>`<tr><td>${esc(x.numero||x.id)}</td><td>${esc(x.cliente_id||"")}</td><td>${esc(x.status||"")}</td><td>${adminMoney(x.mao_de_obra)}</td><td>${adminMoney(x.materiais)}</td><td>${adminMoney(x.total)}</td><td>${x.created_at?new Date(x.created_at).toLocaleDateString("pt-BR"):""}</td></tr>`).join("")||'<tr><td colspan="7">Nenhum orçamento.</td></tr>';}
-async function loadAdminServices(){try{adminServices=await api("servicos?select=*,categorias(nome)&order=id")||[];renderAdminServices();}catch(e){document.getElementById("servicesBody").innerHTML='<tr><td colspan="7">'+esc(e.message)+'</td></tr>';}}
-function renderAdminServices(){const q=(document.getElementById("serviceSearch").value||"").toLowerCase();const rows=adminServices.filter(x=>JSON.stringify(x).toLowerCase().includes(q));document.getElementById("servicesBody").innerHTML=rows.map(s=>`<tr><td>${esc(s.nome)}</td><td>${esc(s.categorias?.nome||"")}</td><td><input type="number" step=".01" value="${Number(s.preco_minimo||0).toFixed(2)}" onchange="saveServicePrice(${s.id},'preco_minimo',this.value)"></td><td><input type="number" step=".01" value="${Number(s.preco_medio||0).toFixed(2)}" onchange="saveServicePrice(${s.id},'preco_medio',this.value)"></td><td><input type="number" step=".01" value="${Number(s.preco_maximo||0).toFixed(2)}" onchange="saveServicePrice(${s.id},'preco_maximo',this.value)"></td><td>${esc(s.unidade)}</td><td>${s.ativo?'<span class="badge">Ativo</span>':'<span class="badge off">Inativo</span>'}</td></tr>`).join("")||'<tr><td colspan="7">Nenhum serviço.</td></tr>';}
-async function saveServicePrice(id,field,value){try{await api("servicos?id=eq."+id,{method:"PATCH",body:{[field]:Math.max(0,Number(value)||0)}});await loadAdminServices();await loadServicesFromSupabase();}catch(e){alert(e.message);await loadAdminServices();}}
-async function loadCategories(){try{adminCategories=await api("categorias?select=*&order=ordem,nome")||[];renderCategories();}catch(e){document.getElementById("categoriesBody").innerHTML='<tr><td colspan="6">'+esc(e.message)+'</td></tr>';}}
-function renderCategories(){document.getElementById("categoriesBody").innerHTML=adminCategories.map(c=>`<tr><td>${esc(c.nome)}</td><td>${esc(c.icone)}</td><td>${esc(c.cor)}</td><td>${esc(c.ordem)}</td><td>${c.ativo?'<span class="badge">Ativa</span>':'<span class="badge off">Inativa</span>'}</td><td class="admin-actions"><button onclick='editCategory(${JSON.stringify(c)})'>Editar</button></td></tr>`).join("")||'<tr><td colspan="6">Nenhuma categoria.</td></tr>';}
-function newCategory(){document.getElementById("categoryForm").style.display="block";document.getElementById("catId").value="";document.getElementById("catNome").value="";document.getElementById("catIcone").value="";document.getElementById("catCor").value="";document.getElementById("catOrdem").value="0";document.getElementById("catAtivo").checked=true;}
-function editCategory(c){newCategory();document.getElementById("catId").value=c.id;document.getElementById("catNome").value=c.nome||"";document.getElementById("catIcone").value=c.icone||"";document.getElementById("catCor").value=c.cor||"";document.getElementById("catOrdem").value=c.ordem||0;document.getElementById("catAtivo").checked=!!c.ativo;}
-function cancelCategory(){document.getElementById("categoryForm").style.display="none";}
-async function saveCategory(){const id=document.getElementById("catId").value;const body={nome:document.getElementById("catNome").value.trim(),icone:document.getElementById("catIcone").value.trim(),cor:document.getElementById("catCor").value.trim(),ordem:Number(document.getElementById("catOrdem").value)||0,ativo:document.getElementById("catAtivo").checked};try{if(id)await api("categorias?id=eq."+id,{method:"PATCH",body});else await api("categorias",{method:"POST",body});cancelCategory();await loadCategories();await loadServicesFromSupabase();}catch(e){document.getElementById("catMsg").textContent=e.message;}}
-async function loadMaterials(){try{adminMaterials=await api("materiais?select=*&order=nome")||[];renderMaterials();}catch(e){document.getElementById("materialsBody").innerHTML='<tr><td colspan="7">'+esc(e.message)+'</td></tr>';}}
-function renderMaterials(){const q=(document.getElementById("materialSearch").value||"").toLowerCase();const rows=adminMaterials.filter(x=>JSON.stringify(x).toLowerCase().includes(q));document.getElementById("materialsBody").innerHTML=rows.map(m=>`<tr><td>${esc(m.nome)}</td><td>${esc(m.unidade)}</td><td>${adminMoney(m.custo)}</td><td>${adminMoney(m.preco_venda)}</td><td>${esc(m.estoque)}</td><td>${m.ativo?'<span class="badge">Ativo</span>':'<span class="badge off">Inativo</span>'}</td><td class="admin-actions"><button onclick='editMaterial(${JSON.stringify(m)})'>Editar</button><button onclick="deleteMaterial(${m.id})">Excluir</button></td></tr>`).join("")||'<tr><td colspan="7">Nenhum material.</td></tr>';}
-function newMaterial(){document.getElementById("materialForm").style.display="block";["matId","matNome","matUnidade","matCusto","matVenda","matEstoque","matDescricao"].forEach(id=>document.getElementById(id).value="");document.getElementById("matAtivo").checked=true;}
-function editMaterial(m){newMaterial();document.getElementById("matId").value=m.id;document.getElementById("matNome").value=m.nome||"";document.getElementById("matUnidade").value=m.unidade||"";document.getElementById("matCusto").value=m.custo||0;document.getElementById("matVenda").value=m.preco_venda||0;document.getElementById("matEstoque").value=m.estoque||0;document.getElementById("matDescricao").value=m.descricao||"";document.getElementById("matAtivo").checked=!!m.ativo;}
-function cancelMaterial(){document.getElementById("materialForm").style.display="none";}
-async function saveMaterial(){const id=document.getElementById("matId").value;const body={nome:document.getElementById("matNome").value.trim(),unidade:document.getElementById("matUnidade").value.trim(),custo:Number(document.getElementById("matCusto").value)||0,preco_venda:Number(document.getElementById("matVenda").value)||0,estoque:Number(document.getElementById("matEstoque").value)||0,descricao:document.getElementById("matDescricao").value.trim(),ativo:document.getElementById("matAtivo").checked};try{if(id)await api("materiais?id=eq."+id,{method:"PATCH",body});else await api("materiais",{method:"POST",body});cancelMaterial();await loadMaterials();}catch(e){document.getElementById("matMsg").textContent=e.message;}}
-async function deleteMaterial(id){if(!confirm("Excluir este material?"))return;try{await api("materiais?id=eq."+id,{method:"DELETE"});await loadMaterials();}catch(e){alert(e.message);}}
-async function loadConfigs(){try{adminConfigs=await api("configuracoes?select=*&order=chave")||[];document.getElementById("configList").innerHTML=adminConfigs.map((c,i)=>`<label>${esc(c.chave)}<input data-config-index="${i}" value="${esc(c.valor)}"></label>`).join("")||"<p>Nenhuma configuração cadastrada.</p>";}catch(e){document.getElementById("configList").innerHTML='<p>'+esc(e.message)+'</p>';}}
-async function saveConfigs(){try{for(const [i,c] of adminConfigs.entries()){const el=document.querySelector('[data-config-index="'+i+'"]');if(el)await api("configuracoes?id=eq."+c.id,{method:"PATCH",body:{valor:el.value}});}document.getElementById("configMsg").textContent="Configurações salvas.";await loadConfigs();}catch(e){document.getElementById("configMsg").textContent=e.message;}}
+function clientName(id){return clients.find(c=>String(c.id)===String(id))?.nome||"Cliente não encontrado"}
+function renderRecent(){const rows=quotes.slice(0,10);recentBody.innerHTML=rows.map(q=>`<tr><td>${esc(q.numero||q.id)}</td><td>${esc(clientName(q.cliente_id))}</td><td>${statusBadge(q.status)}</td><td>${money(q.total)}</td><td>${date(q.created_at)}</td><td><button class="btn small" onclick="editQuote(${q.id})">Abrir</button></td></tr>`).join("")||'<tr><td colspan="6" class="empty">Nenhum orçamento.</td></tr>'}
+
+async function loadClients(){try{clients=await api("clientes?select=*&order=nome")||[];renderClients();populateClientSelects()}catch(e){clients=[];clientsBody.innerHTML='<tr><td colspan="6">'+esc(e.message)+'</td></tr>'}}
+function renderClients(){const q=(clientSearch.value||"").toLowerCase();const rows=clients.filter(c=>JSON.stringify(c).toLowerCase().includes(q));clientsBody.innerHTML=rows.map(c=>`<tr><td><b>${esc(c.nome)}</b></td><td>${esc(c.telefone)}</td><td>${esc(c.whatsapp||"")}</td><td>${esc(c.email)}</td><td>${esc(c.cidade||"")}</td><td class="actions"><button class="btn small" onclick="openClient(${c.id})">Editar</button><button class="btn small" onclick="clientHistory(${c.id})">Histórico</button><button class="btn small danger" onclick="deleteClient(${c.id})">Excluir</button></td></tr>`).join("")||'<tr><td colspan="6" class="empty">Nenhum cliente.</td></tr>'}
+function openClient(id=null){
+ const c=id?clients.find(x=>x.id==id):{};modalTitle.textContent=id?"Editar cliente":"Cadastrar cliente";
+ modalBody.innerHTML=`<div class="grid grid-2">
+ <div class="field"><label>Nome</label><input id="fNome" value="${esc(c.nome)}"></div>
+ <div class="field"><label>Telefone</label><input id="fTel" value="${esc(c.telefone)}"></div>
+ <div class="field"><label>WhatsApp</label><input id="fWhats" value="${esc(c.whatsapp)}"></div>
+ <div class="field"><label>E-mail</label><input id="fEmail" value="${esc(c.email)}"></div>
+ <div class="field"><label>CEP</label><input id="fCep" value="${esc(c.cep)}"></div><div class="field"><label>Rua</label><input id="fRua" value="${esc(c.rua||c.endereco)}"></div>
+ <div class="field"><label>Número</label><input id="fNum" value="${esc(c.numero)}"></div><div class="field"><label>Complemento</label><input id="fComp" value="${esc(c.complemento)}"></div>
+ <div class="field"><label>Bairro</label><input id="fBairro" value="${esc(c.bairro)}"></div><div class="field"><label>Cidade</label><input id="fCidade" value="${esc(c.cidade)}"></div>
+ <div class="field"><label>Estado</label><input id="fEstado" value="${esc(c.estado)}"></div></div>
+ <div class="field"><label>Observações</label><textarea id="fObs">${esc(c.observacoes)}</textarea></div>
+ <button class="btn primary" onclick="saveClient(${id||"null"})">Salvar cliente</button>`;
+ openModal()
+}
+async function saveClient(id){
+ const body={nome:fNome.value.trim(),telefone:fTel.value.trim(),whatsapp:fWhats.value.trim(),email:fEmail.value.trim(),cep:fCep.value.trim(),rua:fRua.value.trim(),numero:fNum.value.trim(),complemento:fComp.value.trim(),bairro:fBairro.value.trim(),cidade:fCidade.value.trim(),estado:fEstado.value.trim(),observacoes:fObs.value.trim()};
+ try{if(id)await api("clientes?id=eq."+id,{method:"PATCH",body});else await api("clientes",{method:"POST",body});closeModal();await loadClients();await loadDashboard()}catch(e){alert(e.message)}
+}
+async function deleteClient(id){if(!confirm("Excluir este cliente?"))return;try{await api("clientes?id=eq."+id,{method:"DELETE"});await loadClients()}catch(e){alert(e.message)}}
+async function clientHistory(id){
+ const rows=await api("orcamentos?cliente_id=eq."+id+"&select=*&order=created_at.desc");
+ modalTitle.textContent="Histórico — "+clientName(id);
+ modalBody.innerHTML=`<div class="table-wrap"><table class="table"><thead><tr><th>Nº</th><th>Status</th><th>Total</th><th>Data</th><th></th></tr></thead><tbody>${(rows||[]).map(q=>`<tr><td>${esc(q.numero||q.id)}</td><td>${statusBadge(q.status)}</td><td>${money(q.total)}</td><td>${date(q.created_at)}</td><td><button class="btn small" onclick="closeModal();editQuote(${q.id})">Abrir</button></td></tr>`).join("")||'<tr><td colspan="5" class="empty">Nenhum orçamento.</td></tr>'}</tbody></table></div>`;openModal()
+}
+
+async function loadQuotes(){try{quotes=await api("orcamentos?select=*&order=created_at.desc")||[];renderQuotes();populateClientSelects()}catch(e){quotes=[];quotesBody.innerHTML='<tr><td colspan="8">'+esc(e.message)+'</td></tr>'}}
+function renderQuotes(){
+ const s=(quoteSearch.value||"").toLowerCase(),st=quoteFilterStatus.value,cl=quoteFilterClient.value;
+ const rows=quotes.filter(q=>(!st||q.status===st)&&(!cl||String(q.cliente_id)===cl)&&JSON.stringify({...q,cliente:clientName(q.cliente_id)}).toLowerCase().includes(s));
+ quotesBody.innerHTML=rows.map(q=>`<tr><td>${esc(q.numero||q.id)}</td><td>${esc(clientName(q.cliente_id))}</td><td>${statusBadge(q.status)}</td><td>${money(q.mao_de_obra)}</td><td>${money(q.materiais)}</td><td><b>${money(q.total)}</b></td><td>${date(q.created_at)}</td><td class="actions"><button class="btn small" onclick="editQuote(${q.id})">Abrir</button><button class="btn small" onclick="duplicateQuote(${q.id})">Duplicar</button><button class="btn small danger" onclick="deleteQuote(${q.id})">Excluir</button><button class="btn small" onclick="printSavedQuote(${q.id})">PDF</button></td></tr>`).join("")||'<tr><td colspan="8" class="empty">Nenhum orçamento.</td></tr>'
+}
+function statusBadge(s){const c=s==="Aprovado"?"green":s==="Rejeitado"||s==="Cancelado"?"red":s==="Enviado"?"blue":s==="Aguardando resposta"?"yellow":"";return `<span class="badge ${c}">${esc(s||"Rascunho")}</span>`}
+function date(v){return v?new Date(v).toLocaleDateString("pt-BR"):""}
+async function editQuote(id){
+ const q=quotes.find(x=>x.id==id)||await api("orcamentos?id=eq."+id+"&select=*").then(x=>x[0]);
+ const items=await api("orcamento_itens?orcamento_id=eq."+id+"&select=*");
+ editingQuoteId=id;quoteItems=(items||[]).map(i=>({id:i.servico_id,nome:i.nome||services.find(s=>s.id==i.servico_id)?.nome||"Serviço",cat:services.find(s=>s.id==i.servico_id)?.categorias?.nome||services.find(s=>s.id==i.servico_id)?.cat||"",qty:Number(i.quantidade||1),price:Number(i.preco_unitario||0),mode:i.modo_preco||"Personalizado"}));
+ await loadClients();await loadServices();populateClientSelects();go("novo");quoteTitle.textContent="Editar orçamento "+(q.numero||q.id);
+ qCliente.value=q.cliente_id||"";qStatus.value=q.status||"Rascunho";qMateriais.value=q.materiais||0;qDeslocamento.value=q.deslocamento||0;qDesconto.value=q.desconto||0;qAcrescimo.value=q.acrescimo||0;qPagamento.value=q.forma_pagamento||"PIX";qPrazo.value=q.prazo||"";qGarantia.value=q.garantia||"";qObs.value=q.observacoes||"";updateClientFields();renderQuoteServices();renderQuoteItems();calcQuote()
+}
+function newQuote(){editingQuoteId=null;quoteTitle.textContent="Novo orçamento";quoteItems=[];["qMateriais","qDeslocamento","qDesconto","qAcrescimo"].forEach(id=>document.getElementById(id).value=0);qStatus.value="Rascunho";qPagamento.value="PIX";qPrazo.value="";qGarantia.value="";qObs.value="";qCliente.value="";updateClientFields();renderQuoteItems();calcQuote()}
+async function saveQuote(){
+ if(!qCliente.value){alert("Selecione um cliente.");return}
+ const mao=quoteItems.reduce((a,x)=>a+x.qty*x.price,0),mat=+qMateriais.value||0,desl=+qDeslocamento.value||0,desc=+qDesconto.value||0,acr=+qAcrescimo.value||0,total=Math.max(0,mao+mat+desl+acr-desc);
+ const body={cliente_id:Number(qCliente.value),status:qStatus.value,mao_de_obra:mao,materiais:mat,deslocamento:desl,desconto:desc,acrescimo:acr,total,forma_pagamento:qPagamento.value,prazo:qPrazo.value.trim(),garantia:qGarantia.value.trim(),observacoes:qObs.value.trim()};
+ try{
+   let saved;
+   if(editingQuoteId)saved=(await api("orcamentos?id=eq."+editingQuoteId,{method:"PATCH",body}))[0];
+   else saved=(await api("orcamentos",{method:"POST",body}))[0];
+   if(editingQuoteId)await api("orcamento_itens?orcamento_id=eq."+editingQuoteId,{method:"DELETE"});
+   for(const i of quoteItems)await api("orcamento_itens",{method:"POST",body:{orcamento_id:saved.id,servico_id:i.id,nome:i.nome,quantidade:i.qty,preco_unitario:i.price,modo_preco:i.mode}});
+   alert("Orçamento salvo com sucesso.");await loadQuotes();await loadDashboard();go("orcamentos")
+ }catch(e){alert("Não foi possível salvar: "+e.message)}
+}
+async function duplicateQuote(id){const q=quotes.find(x=>x.id==id);if(!q)return;await editQuote(id);editingQuoteId=null;qStatus.value="Rascunho";quoteTitle.textContent="Novo orçamento — cópia";go("novo")}
+async function deleteQuote(id){if(!confirm("Excluir este orçamento?"))return;try{await api("orcamento_itens?orcamento_id=eq."+id,{method:"DELETE"});await api("orcamentos?id=eq."+id,{method:"DELETE"});await loadQuotes();await loadDashboard()}catch(e){alert(e.message)}}
+
+async function loadServices(){try{services=await api("servicos?select=*,categorias(nome)&order=nome")||[];renderAdminServices();populateCategorySelects();renderQuoteServices()}catch(e){services=[];servicesBody.innerHTML='<tr><td colspan="8">'+esc(e.message)+'</td></tr>'}}
+function categoryName(s){return s.categorias?.nome||s.cat||"Sem categoria"}
+function renderQuoteServices(){
+ const q=(servicePickSearch.value||"").toLowerCase(),cat=servicePickCat.value||"";
+ const rows=services.filter(s=>s.ativo!==false&&(!cat||String(s.categoria_id)===cat)&&JSON.stringify(s).toLowerCase().includes(q));
+ quoteServices.innerHTML=rows.map(s=>`<div class="service-card"><div><strong>${esc(s.nome)}</strong><div class="price">${esc(categoryName(s))} · Médio ${money(s.preco_medio)}</div></div><button class="btn primary small" onclick="addQuoteItem(${s.id})">＋</button></div>`).join("")||'<div class="empty">Nenhum serviço encontrado.</div>'
+}
+function addQuoteItem(id){const s=services.find(x=>x.id==id);if(!s)return;const old=quoteItems.find(x=>x.id==id);if(old)old.qty++;else quoteItems.push({id:s.id,nome:s.nome,cat:categoryName(s),qty:1,price:Number(s.preco_medio||0),mode:"Médio"});renderQuoteItems();calcQuote()}
+function renderQuoteItems(){quoteItemsEl=document.getElementById("quoteItems");quoteItemsEl.innerHTML=quoteItems.map((x,i)=>`<div class="quote-item"><div class="quote-item-top"><b>${esc(x.nome)}</b><button class="btn small danger" onclick="removeQuoteItem(${i})">Remover</button></div><div class="muted">${esc(x.cat)}</div><div class="quote-controls"><label style="margin:0">Qtd.</label><input type="number" min="1" value="${x.qty}" onchange="changeItemQty(${i},this.value)"><select onchange="changeItemMode(${i},this.value)">${["Mínimo","Médio","Máximo","Personalizado"].map(m=>`<option ${x.mode===m?"selected":""}>${m}</option>`).join("")}</select>${x.mode==="Personalizado"?`<input type="number" step=".01" value="${x.price}" onchange="changeItemPrice(${i},this.value)">`:""}<b style="margin-left:auto">${money(x.qty*x.price)}</b></div></div>`).join("")||'<div class="empty">Adicione serviços acima.</div>'}
+function changeItemQty(i,v){quoteItems[i].qty=Math.max(1,+v||1);renderQuoteItems();calcQuote()}
+function changeItemMode(i,m){const s=services.find(x=>x.id==quoteItems[i].id);quoteItems[i].mode=m;quoteItems[i].price=m==="Mínimo"?+s.preco_minimo||0:m==="Máximo"?+s.preco_maximo||0:m==="Médio"?+s.preco_medio||0:quoteItems[i].price;renderQuoteItems();calcQuote()}
+function changeItemPrice(i,v){quoteItems[i].price=Math.max(0,+v||0);renderQuoteItems();calcQuote()}
+function removeQuoteItem(i){quoteItems.splice(i,1);renderQuoteItems();calcQuote()}
+function calcQuote(){const mao=quoteItems.reduce((a,x)=>a+x.qty*x.price,0),mat=+qMateriais.value||0,desl=+qDeslocamento.value||0,desc=+qDesconto.value||0,acr=+qAcrescimo.value||0; qMao.textContent=money(mao);qMatTotal.textContent=money(mat);qDeslTotal.textContent=money(desl);qDescTotal.textContent=money(desc);qAcrTotal.textContent=money(acr);qTotal.textContent=money(Math.max(0,mao+mat+desl+acr-desc))}
+function updateClientFields(){const c=clients.find(x=>String(x.id)===String(qCliente.value));qTelefone.value=c?.telefone||c?.whatsapp||"";qEndereco.value=c?`${c.rua||c.endereco||""}, ${c.numero||""} - ${c.bairro||""} - ${c.cidade||""}`:""}
+qCliente.addEventListener("change",updateClientFields)
+
+async function openService(id=null){
+ const s=id?services.find(x=>x.id==id):{};modalTitle.textContent=id?"Editar serviço":"Adicionar serviço";
+ modalBody.innerHTML=`<div class="grid grid-2"><div class="field"><label>Nome</label><input id="sfNome" value="${esc(s.nome)}"></div><div class="field"><label>Categoria</label><select id="sfCat">${categories.map(c=>`<option value="${c.id}" ${String(c.id)===String(s.categoria_id)?"selected":""}>${esc(c.nome)}</option>`).join("")}</select></div><div class="field"><label>Preço mínimo</label><input id="sfMin" type="number" step=".01" value="${s.preco_minimo||0}"></div><div class="field"><label>Preço médio</label><input id="sfMed" type="number" step=".01" value="${s.preco_medio||0}"></div><div class="field"><label>Preço máximo</label><input id="sfMax" type="number" step=".01" value="${s.preco_maximo||0}"></div><div class="field"><label>Unidade</label><input id="sfUn" value="${esc(s.unidade||"unidade")}"></div></div><label><input id="sfAtivo" type="checkbox" ${s.ativo!==false?"checked":""}> Ativo</label><br><button class="btn primary" onclick="saveService(${id||"null"})">Salvar</button>`;openModal()
+}
+async function saveService(id){const body={nome:sfNome.value.trim(),categoria_id:Number(sfCat.value)||null,preco_minimo:+sfMin.value||0,preco_medio:+sfMed.value||0,preco_maximo:+sfMax.value||0,unidade:sfUn.value.trim(),ativo:sfAtivo.checked};try{if(id)await api("servicos?id=eq."+id,{method:"PATCH",body});else await api("servicos",{method:"POST",body});closeModal();await loadServices()}catch(e){alert(e.message)}}
+function renderAdminServices(){const q=(serviceSearch.value||"").toLowerCase(),cat=serviceFilterCat.value||"";const rows=services.filter(s=>(!cat||String(s.categoria_id)===cat)&&JSON.stringify(s).toLowerCase().includes(q));servicesBody.innerHTML=rows.map(s=>`<tr><td><b>${esc(s.nome)}</b></td><td>${esc(categoryName(s))}</td><td>${money(s.preco_minimo)}</td><td>${money(s.preco_medio)}</td><td>${money(s.preco_maximo)}</td><td>${esc(s.unidade)}</td><td>${s.ativo?'<span class="badge green">Ativo</span>':'<span class="badge">Inativo</span>'}</td><td class="actions"><button class="btn small" onclick="openService(${s.id})">Editar</button><button class="btn small" onclick="toggleService(${s.id},${!s.ativo})">${s.ativo?"Desativar":"Ativar"}</button></td></tr>`).join("")||'<tr><td colspan="8" class="empty">Nenhum serviço.</td></tr>'}
+async function toggleService(id,ativo){try{await api("servicos?id=eq."+id,{method:"PATCH",body:{ativo}});await loadServices()}catch(e){alert(e.message)}}
+
+async function loadMaterials(){try{materials=await api("materiais?select=*&order=nome")||[];renderMaterials()}catch(e){materialsBody.innerHTML='<tr><td colspan="7">'+esc(e.message)+'</td></tr>'}}
+function renderMaterials(){const q=(materialSearch.value||"").toLowerCase(),rows=materials.filter(m=>JSON.stringify(m).toLowerCase().includes(q));materialsBody.innerHTML=rows.map(m=>`<tr><td><b>${esc(m.nome)}</b></td><td>${esc(m.unidade)}</td><td>${money(m.custo)}</td><td>${money(m.preco_venda)}</td><td>${esc(m.estoque)}</td><td>${m.ativo?'<span class="badge green">Ativo</span>':'<span class="badge">Inativo</span>'}</td><td class="actions"><button class="btn small" onclick="openMaterial(${m.id})">Editar</button><button class="btn small danger" onclick="deleteMaterial(${m.id})">Excluir</button></td></tr>`).join("")||'<tr><td colspan="7" class="empty">Nenhum material.</td></tr>'}
+function openMaterial(id=null){const m=id?materials.find(x=>x.id==id):{};modalTitle.textContent=id?"Editar material":"Adicionar material";modalBody.innerHTML=`<div class="grid grid-2"><div class="field"><label>Nome</label><input id="mfNome" value="${esc(m.nome)}"></div><div class="field"><label>Unidade</label><input id="mfUn" value="${esc(m.unidade||"unidade")}"></div><div class="field"><label>Custo</label><input id="mfCusto" type="number" step=".01" value="${m.custo||0}"></div><div class="field"><label>Preço de venda</label><input id="mfVenda" type="number" step=".01" value="${m.preco_venda||0}"></div><div class="field"><label>Quantidade</label><input id="mfEstoque" type="number" step=".01" value="${m.estoque||0}"></div></div><div class="field"><label>Descrição</label><textarea id="mfDesc">${esc(m.descricao)}</textarea></div><label><input id="mfAtivo" type="checkbox" ${m.ativo!==false?"checked":""}> Ativo</label><br><button class="btn primary" onclick="saveMaterial(${id||"null"})">Salvar</button>`;openModal()}
+async function saveMaterial(id){const body={nome:mfNome.value.trim(),unidade:mfUn.value.trim(),custo:+mfCusto.value||0,preco_venda:+mfVenda.value||0,estoque:+mfEstoque.value||0,descricao:mfDesc.value.trim(),ativo:mfAtivo.checked};try{if(id)await api("materiais?id=eq."+id,{method:"PATCH",body});else await api("materiais",{method:"POST",body});closeModal();await loadMaterials()}catch(e){alert(e.message)}}
+async function deleteMaterial(id){if(!confirm("Excluir este material?"))return;try{await api("materiais?id=eq."+id,{method:"DELETE"});await loadMaterials()}catch(e){alert(e.message)}}
+
+async function loadCategories(){try{categories=await api("categorias?select=*&order=ordem,nome")||[];renderCategories();populateCategorySelects()}catch(e){categoriesBody.innerHTML='<tr><td colspan="6">'+esc(e.message)+'</td></tr>'}}
+function renderCategories(){categoriesBody.innerHTML=categories.map(c=>`<tr><td><b>${esc(c.nome)}</b></td><td>${esc(c.icone)}</td><td><span style="display:inline-block;width:18px;height:18px;border-radius:5px;background:${esc(c.cor||"#1769e0")}"></span> ${esc(c.cor)}</td><td>${esc(c.ordem)}</td><td>${c.ativo?'<span class="badge green">Ativa</span>':'<span class="badge">Inativa</span>'}</td><td class="actions"><button class="btn small" onclick="openCategory(${c.id})">Editar</button><button class="btn small" onclick="toggleCategory(${c.id},${!c.ativo})">${c.ativo?"Desativar":"Ativar"}</button></td></tr>`).join("")||'<tr><td colspan="6" class="empty">Nenhuma categoria.</td></tr>'}
+function openCategory(id=null){const c=id?categories.find(x=>x.id==id):{};modalTitle.textContent=id?"Editar categoria":"Criar categoria";modalBody.innerHTML=`<div class="grid grid-2"><div class="field"><label>Nome</label><input id="cfNome" value="${esc(c.nome)}"></div><div class="field"><label>Ícone</label><input id="cfIcone" value="${esc(c.icone)}"></div><div class="field"><label>Cor</label><input id="cfCor" type="text" value="${esc(c.cor||"#1769e0")}"></div><div class="field"><label>Ordem</label><input id="cfOrdem" type="number" value="${c.ordem||0}"></div></div><label><input id="cfAtivo" type="checkbox" ${c.ativo!==false?"checked":""}> Ativa</label><br><button class="btn primary" onclick="saveCategory(${id||"null"})">Salvar</button>`;openModal()}
+async function saveCategory(id){const body={nome:cfNome.value.trim(),icone:cfIcone.value.trim(),cor:cfCor.value.trim(),ordem:+cfOrdem.value||0,ativo:cfAtivo.checked};try{if(id)await api("categorias?id=eq."+id,{method:"PATCH",body});else await api("categorias",{method:"POST",body});closeModal();await loadCategories();await loadServices()}catch(e){alert(e.message)}}
+async function toggleCategory(id,ativo){try{await api("categorias?id=eq."+id,{method:"PATCH",body:{ativo}});await loadCategories();await loadServices()}catch(e){alert(e.message)}}
+
+async function loadConfigs(){try{configs=await api("configuracoes?select=*&order=chave")||[];configList.innerHTML=configs.map((c,i)=>`<div class="field"><label>${esc(c.chave)}</label><input data-config="${i}" value="${esc(c.valor)}"></div>`).join("")||'<p class="muted">Nenhuma configuração.</p>'}catch(e){configList.innerHTML='<p>'+esc(e.message)+'</p>'}}
+async function saveConfigs(){try{for(let i=0;i<configs.length;i++){const el=document.querySelector(`[data-config="${i}"]`);if(el)await api("configuracoes?id=eq."+configs[i].id,{method:"PATCH",body:{valor:el.value}})}alert("Configurações salvas.")}catch(e){alert(e.message)}}
+
+function populateClientSelects(){
+ const opts='<option value="">Selecione...</option>'+clients.map(c=>`<option value="${c.id}">${esc(c.nome)}</option>`).join("");
+ qCliente.innerHTML=opts;
+ quoteFilterClient.innerHTML='<option value="">Todos os clientes</option>'+clients.map(c=>`<option value="${c.id}">${esc(c.nome)}</option>`).join("");
+}
+function populateCategorySelects(){
+ const opts='<option value="">Todas as categorias</option>'+categories.filter(c=>c.ativo!==false).map(c=>`<option value="${c.id}">${esc(c.nome)}</option>`).join("");
+ servicePickCat.innerHTML=opts;serviceFilterCat.innerHTML=opts;
+}
+
+function openModal(){modal.classList.add("show")}function closeModal(){modal.classList.remove("show")}
+function printCurrentQuote(){printQuoteData({numero:editingQuoteId||"Novo",cliente:clientName(qCliente.value),status:qStatus.value,mao_de_obra:quoteItems.reduce((a,x)=>a+x.qty*x.price,0),materiais:+qMateriais.value||0,deslocamento:+qDeslocamento.value||0,desconto:+qDesconto.value||0,acrescimo:+qAcrescimo.value||0,total:+qTotal.textContent.replace(/[^\d,-]/g,"").replace(".","").replace(",",".")||0,forma_pagamento:qPagamento.value,prazo:qPrazo.value,garantia:qGarantia.value,observacoes:qObs.value,items:quoteItems})}
+async function printSavedQuote(id){const q=quotes.find(x=>x.id==id);const items=await api("orcamento_itens?orcamento_id=eq."+id+"&select=*");printQuoteData({...q,cliente:clientName(q.cliente_id),items:(items||[]).map(i=>({nome:i.nome,qty:i.quantidade,price:i.preco_unitario}))})}
+function printQuoteData(q){
+ const rows=(q.items||[]).map(i=>`<tr><td>${esc(i.nome)}</td><td>${i.qty||i.quantidade||1}</td><td>${money(i.price||i.preco_unitario)}</td><td>${money((i.qty||i.quantidade||1)*(i.price||i.preco_unitario))}</td></tr>`).join("");
+ const w=window.open("","_blank");w.document.write(`<html><head><title>Orçamento ${esc(q.numero)}</title><style>body{font-family:Arial;padding:35px;color:#172033}table{width:100%;border-collapse:collapse;margin-top:20px}th,td{padding:9px;border-bottom:1px solid #ddd;text-align:left}.box{background:#f5f7fb;padding:14px;border-radius:8px;margin:15px 0}.total{text-align:right;font-size:22px;font-weight:bold;margin-top:20px}</style></head><body><h1>⚡ ORÇAMENTO DE SERVIÇOS ELÉTRICOS</h1><div class="box"><b>Nº:</b> ${esc(q.numero)}<br><b>Cliente:</b> ${esc(q.cliente)}<br><b>Status:</b> ${esc(q.status)}<br><b>Data:</b> ${new Date().toLocaleDateString("pt-BR")}</div><table><thead><tr><th>Serviço</th><th>Qtd.</th><th>Unitário</th><th>Total</th></tr></thead><tbody>${rows}</tbody></table><div class="box">Mão de obra: ${money(q.mao_de_obra)}<br>Materiais: ${money(q.materiais)}<br>Deslocamento: ${money(q.deslocamento)}<br>Desconto: ${money(q.desconto)}<br>Acréscimo: ${money(q.acrescimo)}</div><div class="total">TOTAL: ${money(q.total)}</div><div class="box"><b>Pagamento:</b> ${esc(q.forma_pagamento||"")}<br><b>Prazo:</b> ${esc(q.prazo||"")}<br><b>Garantia:</b> ${esc(q.garantia||"")}<br><b>Observações:</b><br>${esc(q.observacoes||"").replace(/\n/g,"<br>")}</div><script>window.onload=()=>window.print()<\/script></body></html>`);w.document.close()
+}
+
+if(token())startApp();else{login.classList.remove("hidden")}
 </script>
-</body></html>
+</body>
+</html>
