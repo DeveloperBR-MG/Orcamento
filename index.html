@@ -648,9 +648,39 @@ async function api(path,o={},retry=true){
   if(!r.ok)throw new Error(d?.message||d?.hint||t||`HTTP ${r.status}`);
   return d;
 }
-const STATUS_UI=["Rascunho","Enviado","Aprovado","Rejeitado","Em execução","Concluído","Cancelado"];
-const STATUS_DB={ "Rascunho":"Rascunho", "Enviado":"Pendente", "Aprovado":"Aprovado", "Rejeitado":"Recusado", "Em execução":"Em execução", "Concluído":"Concluído", "Cancelado":"Cancelado" };
-const STATUS_UI_FROM_DB={ "Rascunho":"Rascunho", "Pendente":"Enviado", "Aprovado":"Aprovado", "Recusado":"Rejeitado", "Em execução":"Em execução", "Concluído":"Concluído", "Cancelado":"Cancelado" };
+const STATUS_UI=[
+  "Rascunho",
+  "Enviado",
+  "Aguardando resposta",
+  "Aprovado",
+  "Rejeitado",
+  "Em execução",
+  "Concluído",
+  "Cancelado"
+];
+
+const STATUS_DB={
+  "Rascunho":"Rascunho",
+  "Enviado":"Pendente",
+  "Aguardando resposta":"Aguardando resposta",
+  "Aprovado":"Aprovado",
+  "Rejeitado":"Recusado",
+  "Em execução":"Em execução",
+  "Concluído":"Concluído",
+  "Cancelado":"Cancelado"
+};
+
+const STATUS_UI_FROM_DB={
+  "Rascunho":"Rascunho",
+  "Pendente":"Enviado",
+  "Aguardando resposta":"Aguardando resposta",
+  "Aprovado":"Aprovado",
+  "Recusado":"Rejeitado",
+  "Em execução":"Em execução",
+  "Concluído":"Concluído",
+  "Cancelado":"Cancelado"
+};
+
 const uiStatus=s=>STATUS_UI_FROM_DB[s]||s||"Rascunho";
 const dbStatus=s=>STATUS_DB[s]||s||"Rascunho";
 function statusBadge(s){s=uiStatus(s);const c=s==="Aprovado"?"green":s==="Enviado"?"blue":(s==="Rejeitado"||s==="Cancelado")?"red":s==="Em execução"||s==="Concluído"?"green":s==="Aguardando resposta"?"yellow":"";return `<span class="badge ${c}">${esc(s)}</span>`}
