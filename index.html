@@ -594,8 +594,52 @@ main,
 </section>
 
 <section id="view-configuracoes" class="view">
+<div class="card" style="margin-top:20px">
 
+  <h2>🔐 Alterar senha</h2>
+
+  <p class="muted">
+    Altere a senha utilizada para entrar no sistema.
+  </p>
+
+  <div class="field">
+    <label>Senha atual</label>
+    <input
+      id="senhaAtual"
+      type="password"
+      placeholder="Digite sua senha atual"
+      autocomplete="current-password"
+    >
+  </div>
+
+  <div class="field">
+    <label>Nova senha</label>
+    <input
+      id="novaSenha"
+      type="password"
+      placeholder="Digite a nova senha"
+      autocomplete="new-password"
+    >
+  </div>
+
+  <div class="field">
+    <label>Confirmar nova senha</label>
+    <input
+      id="confirmarSenha"
+      type="password"
+      placeholder="Digite novamente a nova senha"
+      autocomplete="new-password"
+    >
+  </div>
+
+  <button class="btn primary" onclick="alterarSenha()">
+    🔒 Alterar senha
+  </button>
+
+</div>
   <div class="card">
+    
+    
     <h2>👤 Meu perfil</h2>
     <p class="muted">
       Essas informações serão usadas no sistema e nos seus orçamentos.
@@ -655,7 +699,131 @@ main,
 
 <script>
 
+async function alterarSenha() {
 
+    const senhaAtual = $('senhaAtual').value;
+    const novaSenha = $('novaSenha').value;
+    const confirmarSenha = $('confirmarSenha').value;
+
+    if (!senhaAtual) {
+        alert("Digite sua senha atual.");
+        return;
+    }
+
+    if (!novaSenha) {
+        alert("Digite a nova senha.");
+        return;
+    }
+
+    if (novaSenha.length < 8) {
+        alert("A nova senha deve ter pelo menos 8 caracteres.");
+        return;
+    }
+
+    if (novaSenha !== confirmarSenha) {
+        alert("A confirmação da nova senha não confere.");
+        return;
+    }
+
+    if (senhaAtual === novaSenha) {
+        alert("A nova senha deve ser diferente da senha atual.");
+        return;
+    }
+
+    try {
+
+        /*
+         * 1. Descobrir o usuário logado
+         */
+        const usuario = await fetch(
+            SUPABASE_URL + "/auth/v1/user",
+            {
+                method: "GET",
+                headers: h(true)
+            }
+        );
+
+        const dadosUsuario = await usuario.json();
+
+        if (!usuario.ok || !dadosUsuario.email) {
+            throw new Error(
+                "Não foi possível identificar o usuário."
+            );
+        }
+
+        const email = dadosUsuario.email;
+
+        /*
+         * 2. Confirmar a senha atual
+         *
+         * Fazemos um login de validação.
+         */
+        const validacao = await fetch(
+            SUPABASE_URL + "/auth/v1/token?grant_type=password",
+            {
+                method: "POST",
+                headers: h(false),
+                body: JSON.stringify({
+                    email: email,
+                    password: senhaAtual
+                })
+            }
+        );
+
+        const resultadoValidacao = await validacao.json();
+
+        if (!validacao.ok) {
+            throw new Error(
+                "A senha atual está incorreta."
+            );
+        }
+
+        /*
+         * 3. Alterar a senha no Authentication
+         */
+        const alteracao = await fetch(
+            SUPABASE_URL + "/auth/v1/user",
+            {
+                method: "PUT",
+                headers: h(true),
+                body: JSON.stringify({
+                    password: novaSenha
+                })
+            }
+        );
+
+        const resultadoAlteracao =
+            await alteracao.json().catch(() => ({}));
+
+        if (!alteracao.ok) {
+
+            throw new Error(
+                resultadoAlteracao.msg ||
+                resultadoAlteracao.message ||
+                "Não foi possível alterar a senha."
+            );
+        }
+
+        /*
+         * 4. Limpar campos
+         */
+        $('senhaAtual').value = "";
+        $('novaSenha').value = "";
+        $('confirmarSenha').value = "";
+
+        alert(
+            "✅ Senha alterada com sucesso!"
+        );
+
+    } catch (e) {
+
+        console.error("Erro ao alterar senha:", e);
+
+        alert(
+            "❌ " + e.message
+        );
+    }
+}
 
 
 
