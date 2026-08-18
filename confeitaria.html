@@ -595,7 +595,59 @@ main,
 </section>
 
 <section id="view-configuracoes" class="view">
-  <div class="card"><h2>Configurações</h2><p class="muted">As configurações são carregadas da tabela <b>configuracoes</b>.</p><div id="configList"></div><button class="btn primary" onclick="saveConfigs()">Salvar configurações</button></div>
+
+  <div class="card">
+    <h2>👤 Meu perfil</h2>
+    <p class="muted">
+      Essas informações serão usadas no sistema e nos seus orçamentos.
+    </p>
+
+    <div class="field">
+      <label>Nome</label>
+      <input id="perfilNome" type="text" placeholder="Seu nome">
+    </div>
+
+    <div class="field">
+      <label>E-mail</label>
+      <input id="perfilEmail" type="email" disabled>
+    </div>
+
+    <div class="field">
+      <label>Telefone</label>
+      <input id="perfilTelefone" type="text" placeholder="(31) 99999-9999">
+    </div>
+
+    <div class="field">
+      <label>Empresa</label>
+      <input id="perfilEmpresa" type="text" placeholder="Nome da empresa">
+    </div>
+
+    <div class="field">
+      <label>Cidade</label>
+      <input id="perfilCidade" type="text" placeholder="Sua cidade">
+    </div>
+
+    <button class="btn primary" onclick="salvarPerfil()">
+      💾 Salvar perfil
+    </button>
+  </div>
+
+
+  <div class="card" style="margin-top:20px">
+    <h2>⚙️ Configurações do sistema</h2>
+
+    <p class="muted">
+      As configurações são carregadas da tabela
+      <b>configuracoes</b>.
+    </p>
+
+    <div id="configList"></div>
+
+    <button class="btn primary" onclick="saveConfigs()">
+      Salvar configurações
+    </button>
+  </div>
+
 </section>
 
 </main></div></div>
@@ -621,32 +673,82 @@ const h=(auth=true)=>{const x={apikey:SUPABASE_KEY,"Content-Type":"application/j
 
 async function carregarPerfil() {
     try {
-        if (!currentUserId) return;
+
+        if (!currentUserId) {
+            console.warn("Usuário ainda não identificado.");
+            return;
+        }
 
         const dados = await api(
-            'profiles?select=nome,email,telefone,empresa,cidade&id=eq.' +
+            'profiles?select=*&id=eq.' +
             encodeURIComponent(currentUserId)
         );
 
         const perfil = dados && dados.length ? dados[0] : null;
 
-        const elementoNome = document.getElementById('nomeUsuario');
+        if (!perfil) {
+            console.warn("Perfil não encontrado.");
+            return;
+        }
 
-        if (elementoNome) {
-            elementoNome.textContent =
-                perfil?.nome || perfil?.email || 'Usuário';
+        $('perfilNome').value = perfil.nome || '';
+        $('perfilEmail').value = perfil.email || '';
+        $('perfilTelefone').value = perfil.telefone || '';
+        $('perfilEmpresa').value = perfil.empresa || '';
+        $('perfilCidade').value = perfil.cidade || '';
+
+        const nomeUsuario = $('nomeUsuario');
+
+        if (nomeUsuario) {
+            nomeUsuario.textContent =
+                perfil.nome || perfil.email || 'Usuário';
         }
 
         console.log("Perfil carregado:", perfil);
 
     } catch (e) {
         console.error("Erro ao carregar perfil:", e);
+    }
+}
 
-        const elementoNome = document.getElementById('nomeUsuario');
+async function salvarPerfil() {
 
-        if (elementoNome) {
-            elementoNome.textContent = 'Usuário';
+    try {
+
+        if (!currentUserId) {
+            alert("Usuário não identificado.");
+            return;
         }
+
+        const dados = {
+            nome: $('perfilNome').value.trim(),
+            telefone: $('perfilTelefone').value.trim(),
+            empresa: $('perfilEmpresa').value.trim(),
+            cidade: $('perfilCidade').value.trim()
+        };
+
+        await api(
+            'profiles?id=eq.' + encodeURIComponent(currentUserId),
+            {
+                method: 'PATCH',
+                body: dados
+            }
+        );
+
+        const nome = dados.nome || 'Usuário';
+
+        $('nomeUsuario').textContent = nome;
+
+        alert("Perfil salvo com sucesso!");
+
+    } catch (e) {
+
+        console.error(e);
+
+        alert(
+            "Erro ao salvar perfil:\n" +
+            e.message
+        );
     }
 }
 
@@ -767,7 +869,41 @@ async function startApp(){
     }
   }
 }
-function go(v){document.querySelectorAll('.view').forEach(x=>x.classList.remove('active'));$("view-"+v).classList.add('active');document.querySelectorAll('.nav button').forEach(x=>x.classList.toggle('active',x.dataset.view===v));$('pageTitle').textContent={dashboard:'Dashboard',novo:'Novo orçamento',clientes:'Clientes',orcamentos:'Orçamentos',servicos:'Serviços',materiais:'Materiais',categorias:'Categorias',configuracoes:'Configurações'}[v];if(v==='dashboard')renderDashboard();if(v==='clientes')renderClients();if(v==='orcamentos')renderQuotes();if(v==='servicos')renderAdminServices();if(v==='materiais')renderMaterials();if(v==='categorias')renderCategories();if(v==='configuracoes')renderConfigs()}
+function go(v){
+    document.querySelectorAll('.view')
+        .forEach(x=>x.classList.remove('active'));
+
+    $("view-"+v).classList.add('active');
+
+    document.querySelectorAll('.nav button')
+        .forEach(x=>x.classList.toggle(
+            'active',
+            x.dataset.view===v
+        ));
+
+    $('pageTitle').textContent = {
+        dashboard:'Dashboard',
+        novo:'Novo orçamento',
+        clientes:'Clientes',
+        orcamentos:'Orçamentos',
+        servicos:'Serviços',
+        materiais:'Materiais',
+        categorias:'Categorias',
+        configuracoes:'Configurações'
+    }[v];
+
+    if(v==='dashboard') renderDashboard();
+    if(v==='clientes') renderClients();
+    if(v==='orcamentos') renderQuotes();
+    if(v==='servicos') renderAdminServices();
+    if(v==='materiais') renderMaterials();
+    if(v==='categorias') renderCategories();
+
+    if(v==='configuracoes'){
+        renderConfigs();
+        carregarPerfil();
+    }
+}
 async function loadAll(){await Promise.all([loadClients(),loadCategories(),loadServices(),loadMaterials(),loadQuotes(),loadConfigs()]);populateSelects();renderDashboard();renderServicePicker();renderQuoteMaterialPicker();newQuote()}
 async function loadClients(){clients=await api('clientes?select=*&'+userFilter()+'&order=nome.asc')||[]}
 async function loadCategories(){categories=await api('categorias?select=*&'+userFilter()+'&order=ordem.asc,nome.asc')||[]}
