@@ -472,6 +472,9 @@ main,
 
 <div class="app hidden" id="app">
 <aside class="sidebar">
+<div>
+    Olá, <strong id="nomeUsuario">Usuário</strong>!
+</div>
   <div class="brand">⚡ Orçamento Elétrico<small>Gestão de orçamentos</small></div>
   <div class="nav">
     <div class="section">Principal</div>
@@ -591,7 +594,59 @@ main,
 </section>
 
 <section id="view-configuracoes" class="view">
-  <div class="card"><h2>Configurações</h2><p class="muted">As configurações são carregadas da tabela <b>configuracoes</b>.</p><div id="configList"></div><button class="btn primary" onclick="saveConfigs()">Salvar configurações</button></div>
+
+  <div class="card">
+    <h2>👤 Meu perfil</h2>
+    <p class="muted">
+      Essas informações serão usadas no sistema e nos seus orçamentos.
+    </p>
+
+    <div class="field">
+      <label>Nome</label>
+      <input id="perfilNome" type="text" placeholder="Seu nome">
+    </div>
+
+    <div class="field">
+      <label>E-mail</label>
+      <input id="perfilEmail" type="email" disabled>
+    </div>
+
+    <div class="field">
+      <label>Telefone</label>
+      <input id="perfilTelefone" type="text" placeholder="(31) 99999-9999">
+    </div>
+
+    <div class="field">
+      <label>Empresa</label>
+      <input id="perfilEmpresa" type="text" placeholder="Nome da empresa">
+    </div>
+
+    <div class="field">
+      <label>Cidade</label>
+      <input id="perfilCidade" type="text" placeholder="Sua cidade">
+    </div>
+
+    <button class="btn primary" onclick="salvarPerfil()">
+      💾 Salvar perfil
+    </button>
+  </div>
+
+
+  <div class="card" style="margin-top:20px">
+    <h2>⚙️ Configurações do sistema</h2>
+
+    <p class="muted">
+      As configurações são carregadas da tabela
+      <b>configuracoes</b>.
+    </p>
+
+    <div id="configList"></div>
+
+    <button class="btn primary" onclick="saveConfigs()">
+      Salvar configurações
+    </button>
+  </div>
+
 </section>
 
 </main></div></div>
@@ -599,6 +654,11 @@ main,
 <div id="modal" class="modal"><div class="modal-box"><div class="modal-head"><h2 id="modalTitle"></h2><button class="btn" onclick="closeModal()">Fechar</button></div><div id="modalBody"></div></div></div>
 
 <script>
+
+
+
+
+
 const SUPABASE_URL="https://jfwcvqqjtuqjbtapcdet.supabase.co";
 const SUPABASE_KEY="sb_publishable_gC6HXuFlm59yT60YHFxM8w_CNqzSidO";
 let services=[],clients=[],quotes=[],materials=[],categories=[],configs=[];
@@ -608,6 +668,89 @@ const $=id=>document.getElementById(id), money=v=>Number(v||0).toLocaleString("p
 const token=()=>localStorage.getItem("sb_access_token")||"";
 const refreshToken=()=>localStorage.getItem("sb_refresh_token")||"";
 const h=(auth=true)=>{const x={apikey:SUPABASE_KEY,"Content-Type":"application/json"};if(auth&&token())x.Authorization="Bearer "+token();return x};
+
+
+async function carregarPerfil() {
+    try {
+
+        if (!currentUserId) {
+            console.warn("Usuário ainda não identificado.");
+            return;
+        }
+
+        const dados = await api(
+            'profiles?select=*&id=eq.' +
+            encodeURIComponent(currentUserId)
+        );
+
+        const perfil = dados && dados.length ? dados[0] : null;
+
+        if (!perfil) {
+            console.warn("Perfil não encontrado.");
+            return;
+        }
+
+        $('perfilNome').value = perfil.nome || '';
+        $('perfilEmail').value = perfil.email || '';
+        $('perfilTelefone').value = perfil.telefone || '';
+        $('perfilEmpresa').value = perfil.empresa || '';
+        $('perfilCidade').value = perfil.cidade || '';
+
+        const nomeUsuario = $('nomeUsuario');
+
+        if (nomeUsuario) {
+            nomeUsuario.textContent =
+                perfil.nome || perfil.email || 'Usuário';
+        }
+
+        console.log("Perfil carregado:", perfil);
+
+    } catch (e) {
+        console.error("Erro ao carregar perfil:", e);
+    }
+}
+
+async function salvarPerfil() {
+
+    try {
+
+        if (!currentUserId) {
+            alert("Usuário não identificado.");
+            return;
+        }
+
+        const dados = {
+            nome: $('perfilNome').value.trim(),
+            telefone: $('perfilTelefone').value.trim(),
+            empresa: $('perfilEmpresa').value.trim(),
+            cidade: $('perfilCidade').value.trim()
+        };
+
+        await api(
+            'profiles?id=eq.' + encodeURIComponent(currentUserId),
+            {
+                method: 'PATCH',
+                body: dados
+            }
+        );
+
+        const nome = dados.nome || 'Usuário';
+
+        $('nomeUsuario').textContent = nome;
+
+        alert("Perfil salvo com sucesso!");
+
+    } catch (e) {
+
+        console.error(e);
+
+        alert(
+            "Erro ao salvar perfil:\n" +
+            e.message
+        );
+    }
+}
+
 
 async function refreshSession(){
   const rt=refreshToken();
@@ -713,6 +856,7 @@ async function startApp(){
   $('app').classList.remove('hidden');
   try{
     await loadCurrentUser();
+    await carregarPerfil();
     await loadAll();
   }catch(e){
     if(String(e.message).toLowerCase().includes("sessão expirou")){
@@ -724,7 +868,41 @@ async function startApp(){
     }
   }
 }
-function go(v){document.querySelectorAll('.view').forEach(x=>x.classList.remove('active'));$("view-"+v).classList.add('active');document.querySelectorAll('.nav button').forEach(x=>x.classList.toggle('active',x.dataset.view===v));$('pageTitle').textContent={dashboard:'Dashboard',novo:'Novo orçamento',clientes:'Clientes',orcamentos:'Orçamentos',servicos:'Serviços',materiais:'Materiais',categorias:'Categorias',configuracoes:'Configurações'}[v];if(v==='dashboard')renderDashboard();if(v==='clientes')renderClients();if(v==='orcamentos')renderQuotes();if(v==='servicos')renderAdminServices();if(v==='materiais')renderMaterials();if(v==='categorias')renderCategories();if(v==='configuracoes')renderConfigs()}
+function go(v){
+    document.querySelectorAll('.view')
+        .forEach(x=>x.classList.remove('active'));
+
+    $("view-"+v).classList.add('active');
+
+    document.querySelectorAll('.nav button')
+        .forEach(x=>x.classList.toggle(
+            'active',
+            x.dataset.view===v
+        ));
+
+    $('pageTitle').textContent = {
+        dashboard:'Dashboard',
+        novo:'Novo orçamento',
+        clientes:'Clientes',
+        orcamentos:'Orçamentos',
+        servicos:'Serviços',
+        materiais:'Materiais',
+        categorias:'Categorias',
+        configuracoes:'Configurações'
+    }[v];
+
+    if(v==='dashboard') renderDashboard();
+    if(v==='clientes') renderClients();
+    if(v==='orcamentos') renderQuotes();
+    if(v==='servicos') renderAdminServices();
+    if(v==='materiais') renderMaterials();
+    if(v==='categorias') renderCategories();
+
+    if(v==='configuracoes'){
+        renderConfigs();
+        carregarPerfil();
+    }
+}
 async function loadAll(){await Promise.all([loadClients(),loadCategories(),loadServices(),loadMaterials(),loadQuotes(),loadConfigs()]);populateSelects();renderDashboard();renderServicePicker();renderQuoteMaterialPicker();newQuote()}
 async function loadClients(){clients=await api('clientes?select=*&'+userFilter()+'&order=nome.asc')||[]}
 async function loadCategories(){categories=await api('categorias?select=*&'+userFilter()+'&order=ordem.asc,nome.asc')||[]}
