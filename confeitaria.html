@@ -620,40 +620,35 @@ const h=(auth=true)=>{const x={apikey:SUPABASE_KEY,"Content-Type":"application/j
 
 
 async function carregarPerfil() {
+    try {
+        if (!currentUserId) return;
 
-    const {
-        data: { user },
-        error
-    } = await supabase.auth.getUser();
+        const dados = await api(
+            'profiles?select=nome,email,telefone,empresa,cidade&id=eq.' +
+            encodeURIComponent(currentUserId)
+        );
 
-    if (error || !user) {
-        console.log("Usuário não está logado");
-        return;
-    }
+        const perfil = dados && dados.length ? dados[0] : null;
 
-    const { data: perfil, error: perfilError } = await supabase
-        .from('profiles')
-        .select('nome, email, telefone, empresa, cidade')
-        .eq('id', user.id)
-        .single();
+        const elementoNome = document.getElementById('nomeUsuario');
 
-    if (perfilError) {
-        console.error("Erro ao carregar perfil:", perfilError);
-        return;
-    }
+        if (elementoNome) {
+            elementoNome.textContent =
+                perfil?.nome || perfil?.email || 'Usuário';
+        }
 
-    console.log("Perfil:", perfil);
+        console.log("Perfil carregado:", perfil);
 
-    // Nome
-    const elementoNome = document.getElementById('nomeUsuario');
+    } catch (e) {
+        console.error("Erro ao carregar perfil:", e);
 
-    if (elementoNome) {
-        elementoNome.textContent =
-            perfil.nome || user.email;
+        const elementoNome = document.getElementById('nomeUsuario');
+
+        if (elementoNome) {
+            elementoNome.textContent = 'Usuário';
+        }
     }
 }
-
-carregarPerfil();
 
 
 async function refreshSession(){
@@ -760,6 +755,7 @@ async function startApp(){
   $('app').classList.remove('hidden');
   try{
     await loadCurrentUser();
+    await carregarPerfil();
     await loadAll();
   }catch(e){
     if(String(e.message).toLowerCase().includes("sessão expirou")){
