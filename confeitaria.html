@@ -472,6 +472,10 @@ main,
 
 <div class="app hidden" id="app">
 <aside class="sidebar">
+
+    <div>
+    Olá, <strong id="nomeUsuario">Usuário</strong>!
+</div>
   <div class="brand"><svg xmlns="http://www.w3.org/2000/svg" height="48px" viewBox="0 -960 960 960" width="48px" fill="#EA33F7"><path d="M160-80q-17 0-28.5-11.5T120-120v-219q0-24.75 17.63-42.38Q155.25-399 180-399h27v-182q0-24.75 17.63-42.38Q242.25-641 267-641h183v-64q-20-14-30.5-30.53-10.5-16.54-10.5-39.88 0-14.59 5.5-28.09T430-827l50-53 50 53q10 10 16 23.5t6 28.09q0 23.34-11 39.88Q530-719 510-705v64h183q24.75 0 42.38 17.62Q753-605.75 753-581v182h27q24.75 0 42.38 17.62Q840-363.75 840-339v219q0 17-11.5 28.5T800-80H160Zm107-319h426v-182H267v182Zm-87 259h600v-199H180v199Zm87-259h426-426Zm-87 259h600-600Zm600-259H180h600Z"/></svg> Orçamento para Confeitaria<small>Gestão de orçamentos</small></div>
   <div class="nav">
     <div class="section">Principal</div>
@@ -599,6 +603,11 @@ main,
 <div id="modal" class="modal"><div class="modal-box"><div class="modal-head"><h2 id="modalTitle"></h2><button class="btn" onclick="closeModal()">Fechar</button></div><div id="modalBody"></div></div></div>
 
 <script>
+
+
+
+
+
 const SUPABASE_URL="https://jfwcvqqjtuqjbtapcdet.supabase.co";
 const SUPABASE_KEY="sb_publishable_gC6HXuFlm59yT60YHFxM8w_CNqzSidO";
 let services=[],clients=[],quotes=[],materials=[],categories=[],configs=[];
@@ -608,6 +617,44 @@ const $=id=>document.getElementById(id), money=v=>Number(v||0).toLocaleString("p
 const token=()=>localStorage.getItem("sb_access_token")||"";
 const refreshToken=()=>localStorage.getItem("sb_refresh_token")||"";
 const h=(auth=true)=>{const x={apikey:SUPABASE_KEY,"Content-Type":"application/json"};if(auth&&token())x.Authorization="Bearer "+token();return x};
+
+
+async function carregarPerfil() {
+
+    const {
+        data: { user },
+        error
+    } = await supabase.auth.getUser();
+
+    if (error || !user) {
+        console.log("Usuário não está logado");
+        return;
+    }
+
+    const { data: perfil, error: perfilError } = await supabase
+        .from('profiles')
+        .select('nome, email, telefone, empresa, cidade')
+        .eq('id', user.id)
+        .single();
+
+    if (perfilError) {
+        console.error("Erro ao carregar perfil:", perfilError);
+        return;
+    }
+
+    console.log("Perfil:", perfil);
+
+    // Nome
+    const elementoNome = document.getElementById('nomeUsuario');
+
+    if (elementoNome) {
+        elementoNome.textContent =
+            perfil.nome || user.email;
+    }
+}
+
+carregarPerfil();
+
 
 async function refreshSession(){
   const rt=refreshToken();
