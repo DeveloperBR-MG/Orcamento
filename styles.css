@@ -2,7 +2,7 @@
 :root{
   --bg:#f5f7fb;--card:#fff;--text:#172033;--muted:#667085;--primary:#1769e0;
   --primary-dark:#0f55bd;--border:#e4e7ec;--success:#16803a;--warning:#b7791f;
-  --danger:#c62828;--sidebar:#101827;--shadow:0 4px 18px rgba(16,24,40,.07)
+  --danger:#c62828;--sidebar:#074561;--shadow:0 4px 18px rgba(16,24,40,.07)
 }
 *{box-sizing:border-box}body{margin:0;font-family:Arial,Helvetica,sans-serif;background:var(--bg);color:var(--text)}
 button,input,select,textarea{font:inherit}button{cursor:pointer}
